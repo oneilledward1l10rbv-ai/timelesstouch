@@ -79,11 +79,12 @@ create policy "photos delete" on storage.objects for delete to authenticated usi
 create or replace view public.shop_watches as
   select id, brand, model, ref, year, movement, size, material, condition, accessories, photos,
          list_price, shop_desc, updated_at,
-         case when status = 'Sẵn sàng bán' or (status = 'Đang giữ (đơn web)' and hold_until < now()) then 'available' else 'held' end as avail
+         case when status = 'Khách đã cọc' then 'held' else 'available' end as avail
   from public.watches
   where coalesce(show_on_shop, true) and list_price > 0
-    and (status = 'Sẵn sàng bán' or status = 'Đang giữ (đơn web)' or status = 'Khách đã cọc');
+    and status in ('Sẵn sàng bán', 'Đang giữ (đơn web)', 'Khách đã cọc');
 grant select on public.shop_watches to anon, authenticated;
+
 
 create table if not exists public.tt_orders (
   id text primary key, watch_id text references public.watches(id) on delete set null,
@@ -95,27 +96,26 @@ alter table public.tt_orders enable row level security;
 drop policy if exists "orders staff" on public.tt_orders;
 create policy "orders staff" on public.tt_orders for all to authenticated using (true) with check (true);
 
--- Khách đặt hàng qua hàm này (giữ hàng 2 tiếng để chuyển khoản)
+-- Khách đặt hàng qua hàm này (không giữ hàng; tiệm xác nhận tiền rồi mới bán)
 create or replace function public.place_order(p_watch text, p_name text, p_phone text, p_address text, p_note text)
 returns json language plpgsql security definer set search_path = public as $$
-declare w public.watches; code text;
+declare w public.watches; code text; ph text;
 begin
-  if length(trim(coalesce(p_name,''))) < 2 or length(regexp_replace(coalesce(p_phone,''),'\D','','g')) < 9 then
-    raise exception 'Vui lòng nhập họ tên và số điện thoại';
-  end if;
-  select * into w from public.watches where id = p_watch for update;
+  ph := regexp_replace(coalesce(p_phone,''), '[\s\.\-]', '', 'g');
+  if length(trim(coalesce(p_name,''))) < 2 then raise exception 'Vui lòng nhập họ tên'; end if;
+  if ph !~ '^(0|\+?84)(3|5|7|8|9)[0-9]{8}$' then raise exception 'Số điện thoại chưa đúng (10 số, ví dụ 0901234567)'; end if;
+  select * into w from public.watches where id = p_watch;
   if not found or not coalesce(w.show_on_shop, true) or coalesce(w.list_price,0) <= 0
-     or not (w.status = 'Sẵn sàng bán' or (w.status = 'Đang giữ (đơn web)' and w.hold_until < now())) then
-    raise exception 'Chiếc đồng hồ này vừa có khách khác đặt';
+     or w.status not in ('Sẵn sàng bán', 'Đang giữ (đơn web)') then
+    raise exception 'Chiếc đồng hồ này vừa được bán, bạn xem mẫu khác nhé';
   end if;
-  update public.tt_orders set status = 'Hết hạn' where watch_id = p_watch and status = 'Chờ thanh toán';
   code := 'TT' || to_char(now() at time zone 'Asia/Ho_Chi_Minh', 'DDMM') || upper(substr(md5(random()::text), 1, 4));
   insert into public.tt_orders (id, watch_id, name, phone, address, note, amount)
-  values (code, p_watch, left(trim(p_name),80), left(trim(p_phone),20), left(coalesce(p_address,''),300), left(coalesce(p_note,''),500), w.list_price);
-  update public.watches set status = 'Đang giữ (đơn web)', hold_until = now() + interval '2 hours', updated_at = now() where id = p_watch;
+  values (code, p_watch, left(trim(p_name),80), left(ph,20), left(coalesce(p_address,''),300), left(coalesce(p_note,''),500), w.list_price);
   return json_build_object('code', code, 'amount', w.list_price);
 end $$;
 grant execute on function public.place_order(text,text,text,text,text) to anon, authenticated;
+
 
 -- Khách xem tình trạng đơn của mình bằng mã đơn
 create or replace function public.order_status(p_code text) returns text
