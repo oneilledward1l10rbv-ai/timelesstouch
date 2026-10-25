@@ -1,5 +1,5 @@
 -- TimelessTouch · Kho đồng hồ
--- Chạy 1 lần trong Supabase → SQL Editor của project TimelessTouch (project riêng, không dùng chung với HPG CRM).
+-- Chạy 1 lần trong Supabase → SQL Editor của project TimelessTouch (project riêng, tách hẳn khỏi HPG).
 -- Chạy lại nhiều lần cũng không sao.
 
 -- 1) Danh sách chủ shop: chỉ email trong bảng này mới thấy giá nhập, chi phí, lãi

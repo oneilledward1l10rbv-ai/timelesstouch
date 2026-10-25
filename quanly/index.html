@@ -653,7 +653,7 @@ function loginView(msg){
   ${msg?`<div class="banner">${msg}</div>`:`<form id="login"><input class="ctl" name="email" type="email" placeholder="Email" autocomplete="username" required><input class="ctl" name="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password" required><button class="btn pri" type="submit" style="justify-content:center">Đăng nhập</button><div id="lerr" class="sub" style="color:var(--neg);text-align:center"></div></form>`}</div></div>`;
 }
 async function boot(){
-  if(!CFG.SUPABASE_URL||!CFG.SUPABASE_ANON_KEY){loginView("Chưa kết nối cơ sở dữ liệu. Điền <b>SUPABASE_URL</b> và <b>SUPABASE_ANON_KEY</b> trong file <code>timeless/config.js</code>.");return}
+  if(!CFG.SUPABASE_URL||!CFG.SUPABASE_ANON_KEY){loginView("Chưa kết nối cơ sở dữ liệu. Điền <b>SUPABASE_URL</b> và <b>SUPABASE_ANON_KEY</b> trong file <code>config.js</code>.");return}
   sb=sb||window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
   const {data}=await sb.auth.getSession();if(!data.session){loginView();return}
   S.email=data.session.user.email;
