@@ -131,11 +131,11 @@ const fmt=n=>Math.round(Number(n)||0).toLocaleString("vi-VN");
 const url=p=>p?`${C.SUPABASE_URL}/storage/v1/object/public/photos/${p.split("/").map(encodeURIComponent).join("/")}`:"";
 const nm=w=>[w.model].filter(Boolean).join(" ")||w.brand||"Đồng hồ vintage";
 let sb=null, ITEMS=[], gi=0, poll=null;
+const zaloUrl=()=>{const z=String(C.ZALO||"").trim();return !z?"":/^https?:/.test(z)?z:`https://zalo.me/${z.replace(/\D/g,"")}`};
 function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 
 function socials(){
-  const z=(C.ZALO||"").replace(/\D/g,"");
-  const L=[[z&&`https://zalo.me/${z}`,"Zalo"],[C.FACEBOOK,"FB"],[C.INSTAGRAM,"IG"],[C.TIKTOK,"TT"]].filter(x=>x[0]);
+  const L=[[zaloUrl(),"Zalo"],[C.FACEBOOK,"FB"],[C.INSTAGRAM,"IG"],[C.TIKTOK,"TT"]].filter(x=>x[0]);
   const h=L.map(([u,l])=>`<a class="ic" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${l}">${l}</a>`).join("");
   $("#soc").innerHTML=h;$("#soc2").innerHTML=h;$("#addr").textContent=C.ADDRESS||"";
 }
@@ -160,7 +160,7 @@ function detail(id,keep){
     ${w.shop_desc?`<div class="desc">${esc(w.shop_desc)}</div>`:""}
     <dl class="spec">${spec.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
     ${w.avail==="available"?`<button class="btn gold" type="button" data-a="buy" style="font-size:16px;padding:14px">Mua ngay · chuyển khoản</button>`:`<div class="held">Chiếc này đang có khách giữ. Nhắn shop để được báo nếu khách không lấy.</div>`}
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${(C.ZALO?`<a class="btn" style="flex:1" href="https://zalo.me/${esc(String(C.ZALO).replace(/\D/g,""))}" target="_blank" rel="noopener">Hỏi qua Zalo</a>`:"")+(C.FACEBOOK?`<a class="btn" style="flex:1" href="${esc(C.FACEBOOK)}" target="_blank" rel="noopener">Nhắn Facebook</a>`:"")}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${(zaloUrl()?`<a class="btn" style="flex:1" href="${esc(zaloUrl())}" target="_blank" rel="noopener">Hỏi qua Zalo</a>`:"")+(C.FACEBOOK?`<a class="btn" style="flex:1" href="${esc(C.FACEBOOK)}" target="_blank" rel="noopener">Nhắn Facebook</a>`:"")}</div>
     <div class="trust"><span>Ảnh chụp thật</span><span>Kiểm tra máy trước khi giao</span><span>Bảo hành máy</span><span>Giữ hàng 2 tiếng khi đặt</span></div>
    </div></div></div>`);
   const m=$("#gm");let x0=null;m?.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});m?.addEventListener("touchend",e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){gi=(gi+(dx<0?1:-1)+ph.length)%ph.length;detail(id,true)}x0=null});

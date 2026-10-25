@@ -1,16 +1,16 @@
-// Cấu hình TimelessTouch — chỉ dán khoá PUBLISHABLE (anon), KHÔNG BAO GIỜ dán secret / service_role vào đây.
+// Cấu hình TimelessTouch — chỉ dán khoá PUBLISHABLE, KHÔNG BAO GIỜ dán secret / service_role vào đây.
 window.TT_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
-  // Tài khoản nhận chuyển khoản (hiện mã QR cho khách trên web bán hàng)
-  BANK_BIN: "",        // mã ngân hàng VietQR, vd Vietcombank 970436, Techcombank 970407, MB 970422, ACB 970416
-  BANK_NAME: "",       // vd "Techcombank"
-  ACCOUNT_NO: "",
-  ACCOUNT_NAME: "",    // tên chủ tài khoản, viết HOA không dấu
-  // Liên hệ hiện trên web bán hàng
-  ZALO: "",            // số Zalo
-  FACEBOOK: "",        // link trang Facebook
-  INSTAGRAM: "",       // link Instagram
-  TIKTOK: "",          // link TikTok
+  SUPABASE_URL: "https://fzpasmlurrpcigrregkh.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_VvPtxbb8gE_Z1O88Z58FQQ_Z42m_C92",
+  // Tài khoản nhận chuyển khoản (mã QR VietQR cho khách)
+  BANK_BIN: "970416",
+  BANK_NAME: "ACB",
+  ACCOUNT_NO: "42194657",
+  ACCOUNT_NAME: "TRUONG THANH NGAN",
+  // Liên hệ
+  ZALO: "https://zaloapp.com/qr/p/19huzwa71hh4p",
+  FACEBOOK: "https://www.facebook.com/profile.php?id=61589764829413",
+  INSTAGRAM: "https://www.instagram.com/bytimelesstouch_vn",
+  TIKTOK: "https://www.tiktok.com/@bytimelesstouch_",
   ADDRESS: "119 Phổ Quang, Phú Nhuận, TP.HCM"
 };
