@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TimelessTouch · Quản lý kho</title>
+<meta name="theme-color" content="#1F1813">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F1813'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23C9A46A' stroke-width='4'/%3E%3Cpath d='M32 20v13l8 5' stroke='%23C9A46A' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F2EA; --surface:#FFFDF9; --sunk:#EFE9DE; --line:#E4DBCC; --line-2:#D2C6B2;
+  --ink:#231C14; --muted:#6E6253; --faint:#9A8E7E;
+  --side:#1F1813; --side-2:#2C231C; --side-ink:#D9CCB9;
+  --brass:#B08A4F; --brass-ink:#7A5A26; --brass-soft:#F3EAD9;
+  --accent:#33271D; --accent-ink:#FFF8EE;
+  --pos:#2E7350; --pos-soft:#E2F0E7; --neg:#B23A2C; --neg-soft:#F8E3DF;
+  --warn:#946200; --warn-soft:#FAEFD6; --info:#2F5E8A; --info-soft:#E2ECF6; --idle:#6F6A62; --idle-soft:#ECE8E1;
+  --shadow:0 1px 2px rgba(35,28,20,.06),0 3px 10px rgba(35,28,20,.05);
+  --f:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-brand:"Cormorant Garamond",Georgia,serif;
+  --r:12px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14100C; --surface:#1D1712; --sunk:#181310; --line:#33291F; --line-2:#44372A;
+  --ink:#F1E8DA; --muted:#B3A591; --faint:#857867;
+  --side:#0F0B08; --side-2:#211A14; --side-ink:#CDBFA9;
+  --brass:#D1AC70; --brass-ink:#E0BE85; --brass-soft:#2E2416;
+  --accent:#E6D3B3; --accent-ink:#1A140F;
+  --pos:#62C08F; --pos-soft:#14301F; --neg:#F08C7C; --neg-soft:#3A1D18;
+  --warn:#E5B653; --warn-soft:#33280F; --info:#86B3E0; --info-soft:#17283B; --idle:#A49C90; --idle-soft:#26201A;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14100C; --surface:#1D1712; --sunk:#181310; --line:#33291F; --line-2:#44372A;
+  --ink:#F1E8DA; --muted:#B3A591; --faint:#857867;
+  --side:#0F0B08; --side-2:#211A14; --side-ink:#CDBFA9;
+  --brass:#D1AC70; --brass-ink:#E0BE85; --brass-soft:#2E2416;
+  --accent:#E6D3B3; --accent-ink:#1A140F;
+  --pos:#62C08F; --pos-soft:#14301F; --neg:#F08C7C; --neg-soft:#3A1D18;
+  --warn:#E5B653; --warn-soft:#33280F; --info:#86B3E0; --info-soft:#17283B; --idle:#A49C90; --idle-soft:#26201A;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brass-ink)}
+.num{font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{background:var(--side);color:var(--side-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px}
+.brand svg{flex:none}
+.brand b{font:600 23px/1 var(--f-brand);color:#F3E6CF;letter-spacing:.3px}
+.brand small{display:block;font-size:10.5px;letter-spacing:2.4px;color:var(--brass);margin-top:4px;text-transform:uppercase}
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--side-ink);font-weight:500}
+.nav button:hover{background:var(--side-2)}
+.nav button[aria-current="page"]{background:var(--side-2);color:#FFF4E2;box-shadow:inset 3px 0 0 var(--brass)}
+.nav svg{width:18px;height:18px;flex:none;opacity:.85}
+.nav .badge{margin-left:auto;background:var(--brass);color:#1F1813;border-radius:99px;font-size:11px;font-weight:700;padding:1px 7px}
+.side .me{margin-top:auto;font-size:12.5px;padding:0 8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--side-2);padding-top:14px}
+.side .me .role{color:var(--brass);font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.side .me button{all:unset;cursor:pointer;border:1px solid var(--side-2);border-radius:8px;padding:6px 10px;text-align:center}
+main{padding:28px 30px 60px;min-width:0}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font:600 30px/1.1 var(--f-brand);margin:0;letter-spacing:.2px}
+.head p{margin:4px 0 0;color:var(--muted)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--brass)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.gold{background:var(--brass);color:#1F1813;border-color:var(--brass)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--neg)}
+.btn:disabled{opacity:.55;cursor:default}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.card-h h2{margin:0;font-size:15px;font-weight:600}
+.card-b{padding:16px 18px}
+.grid{display:grid;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.kpi{padding:16px 18px}
+.kpi .l{font-size:12.5px;color:var(--muted);font-weight:500}
+.kpi .v{font-size:26px;font-weight:700;margin-top:4px;letter-spacing:-.3px}
+.kpi .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+.lock{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--brass-ink);background:var(--brass-soft);border-radius:99px;padding:1px 8px;margin-left:6px;font-weight:600}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+.ctl{border:1px solid var(--line-2);background:var(--surface);border-radius:9px;padding:8px 11px;min-width:0}
+.ctl:focus,.btn:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar .ctl{flex:1 1 150px}
+.bar .q{flex:2 1 240px}
+.tabs{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.tabs button{all:unset;cursor:pointer;padding:6px 14px;border-radius:8px;font-weight:500;color:var(--muted);font-size:13.5px}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.pill{display:inline-flex;align-items:center;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+.st-new{background:var(--idle-soft);color:var(--idle)}
+.st-fix{background:var(--warn-soft);color:var(--warn)}
+.st-ready{background:var(--pos-soft);color:var(--pos)}
+.st-hold{background:var(--info-soft);color:var(--info)}
+.st-sold{background:var(--brass-soft);color:var(--brass-ink)}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.w{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .12s,border-color .12s}
+.w:hover{transform:translateY(-2px);border-color:var(--brass)}
+.w .ph{aspect-ratio:1;background:var(--sunk);position:relative;overflow:hidden}
+.w .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.w .ph .pill{position:absolute;left:8px;top:8px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.w .ph .cnt{position:absolute;right:8px;bottom:8px;background:rgba(20,15,10,.65);color:#fff;font-size:11px;border-radius:99px;padding:1px 8px}
+.w .bd{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px}
+.w .code{font-size:11.5px;color:var(--faint);font-weight:600;letter-spacing:.4px}
+.w .nm{font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.w .pr{font-weight:700;margin-top:4px}
+.w .meta{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.old{color:var(--neg);font-weight:600}
+.noph{display:flex;align-items:center;justify-content:center;height:100%;color:var(--faint);flex-direction:column;gap:4px;font-size:12px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--sunk);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.col h3{margin:0 2px 2px;font-size:13px;display:flex;justify-content:space-between;color:var(--muted)}
+.mini{display:flex;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;align-items:center}
+.mini:hover{border-color:var(--brass)}
+.mini img,.mini .noimg{width:48px;height:48px;border-radius:8px;object-fit:cover;flex:none;background:var(--line)}
+.mini .t{font-size:13px;font-weight:600;line-height:1.3}
+.mini .s{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);text-align:left;font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--sunk);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--sunk)}
+.r{text-align:right}
+.tw{overflow-x:auto}
+.thumb{width:42px;height:42px;border-radius:8px;object-fit:cover;background:var(--sunk);display:block}
+.sub{color:var(--muted);font-size:12.5px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:8px}
+.hbar{display:grid;grid-template-columns:110px 1fr 90px;gap:10px;align-items:center;font-size:13px}
+.hbar .tr{background:var(--sunk);border-radius:6px;height:12px;overflow:hidden}
+.hbar .fl{height:100%;background:var(--brass);border-radius:6px}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(20,14,9,.55);display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;z-index:40;overflow-y:auto}
+.md{background:var(--surface);border-radius:16px;width:min(980px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative}
+.md.sm{width:min(560px,100%)}
+.md-h{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);gap:10px}
+.md-h h2{margin:0;font:600 22px/1.2 var(--f-brand)}
+.md-b{padding:18px 20px}
+.md-f{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+.x{all:unset;cursor:pointer;font-size:22px;line-height:1;padding:4px 8px;border-radius:8px;color:var(--muted)}
+.x:hover{background:var(--sunk)}
+.det{display:grid;grid-template-columns:1.05fr 1fr;gap:22px}
+.gal .main{aspect-ratio:1;background:var(--sunk);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.gal .main img{width:100%;height:100%;object-fit:contain;background:#0E0A07}
+.gal .ths{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gal .th{position:relative;width:68px;height:68px;border-radius:9px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:var(--sunk)}
+.gal .th.on{border-color:var(--brass)}
+.gal .th img{width:100%;height:100%;object-fit:cover;display:block}
+.gal .th .cov{position:absolute;left:3px;bottom:3px;background:var(--brass);color:#1F1813;font-size:9.5px;font-weight:700;border-radius:4px;padding:0 4px}
+.gal .add{width:68px;height:68px;border-radius:9px;border:1.5px dashed var(--line-2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:12px;text-align:center;line-height:1.2}
+.gal .tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:13.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:500}
+.box{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.box.own{border-color:var(--brass);background:var(--brass-soft)}
+.box h3{margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.big{font-size:28px;font-weight:700;letter-spacing:-.4px}
+.rep{display:flex;justify-content:space-between;gap:8px;font-size:13px;border-bottom:1px dashed var(--line-2);padding:4px 0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.form label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.form .full{grid-column:1/-1}
+.form .ctl{font-weight:400;color:var(--ink);width:100%}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:99px;padding:5px 11px;font-size:13px;cursor:pointer;font-weight:500;color:var(--ink);background:var(--surface)}
+.chip input{accent-color:var(--brass)}
+.sec{grid-column:1/-1;margin:6px 0 -2px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--brass-ink);font-weight:700;display:flex;align-items:center;gap:8px}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 18px;border-radius:10px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;max-width:calc(100vw - 32px)}
+.toast.err{background:var(--neg);color:#fff}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--side)}
+.login .card{width:min(400px,100%);padding:30px}
+.login h1{font-size:34px;text-align:center}
+.login p{text-align:center;color:var(--muted);margin:6px 0 20px}
+.login form{display:flex;flex-direction:column;gap:10px}
+.banner{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13.5px}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.order{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.order.wait{border-color:var(--info)}
+.prog{font-size:13px;color:var(--muted);margin-top:8px}
+.mb-nav{display:none}
+@media (max-width:900px){
+  .two,.det{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .side{position:sticky;top:0;height:auto;flex-direction:row;align-items:center;padding:10px 14px;z-index:20}
+  .side .nav,.side .me{display:none}
+  .side .mtop{margin-left:auto;display:flex;gap:6px}
+  main{padding:18px 16px 96px}
+  .mb-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--side);z-index:30;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .mb-nav button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--side-ink);padding:4px 6px;border-radius:8px;position:relative}
+  .mb-nav button[aria-current="page"]{color:var(--brass)}
+  .mb-nav svg{width:21px;height:21px}
+  .mb-nav .badge{position:absolute;top:0;right:2px;background:var(--brass);color:#1F1813;border-radius:99px;font-size:10px;font-weight:700;padding:0 5px}
+  .wgrid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .form{grid-template-columns:1fr}
+  .ov{padding:0}
+  .md{border-radius:0;min-height:100vh}
+  .kv{grid-template-columns:110px 1fr}
+  h1{font-size:26px}
+  .hbar{grid-template-columns:90px 1fr 70px}
+}
+@media (min-width:821px){.side .mtop{display:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script>
+"use strict";
+const CFG=window.TT_CONFIG||{};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{const n=Number(String(v??"").replace(/[^\d-]/g,""));return isFinite(n)?n:0};
+const fmt=n=>Math.round(Number(n)||0).toLocaleString("vi-VN");
+const fmtM=n=>{n=Number(n)||0;const a=Math.abs(n);return a>=1e9?(n/1e9).toLocaleString("vi-VN",{maximumFractionDigits:2})+" tỷ":a>=1e6?(n/1e6).toLocaleString("vi-VN",{maximumFractionDigits:1})+" tr":a>=1e3?Math.round(n/1e3)+"k":String(Math.round(n))};
+const pad=n=>String(n).padStart(2,"0");
+const isoOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayISO=()=>isoOf(new Date());
+const dmy=s=>s?s.slice(0,10).split("-").reverse().join("/"):"";
+const daysSince=s=>s?Math.max(0,Math.floor((new Date(todayISO())-new Date(s.slice(0,10)))/864e5)):0;
+const addMonths=(iso,m)=>{const d=new Date(iso);d.setMonth(d.getMonth()+m);return isoOf(d)};
+const monthOf=s=>(s||"").slice(0,7);
+const mLabel=m=>{const [y,mm]=m.split("-");return `T${Number(mm)}/${y.slice(2)}`};
+
+const STATUSES=["Mới nhập","Đang sửa / lau dầu","Sẵn sàng bán","Đang giữ (đơn web)","Khách đã cọc","Đã bán"];
+const ST_CLS={"Mới nhập":"st-new","Đang sửa / lau dầu":"st-fix","Sẵn sàng bán":"st-ready","Đang giữ (đơn web)":"st-hold","Khách đã cọc":"st-hold","Đã bán":"st-sold"};
+const CHANNELS=["TikTok","Facebook","Instagram","Website","Khách quen / giới thiệu","Tại shop","Khác"];
+const PAYS=["Chuyển khoản","Tiền mặt","Thẻ","COD (ship thu hộ)"];
+const ACCS=["Hộp","Sổ / giấy tờ","Thẻ bảo hành","Dây zin","Khoá zin","Mắt dây dư"];
+const MOVES=["Automatic","Quartz","Lên cót tay","Solar","Kinetic","Spring Drive"];
+const CONDS=["Như mới","Rất đẹp (95%+)","Đẹp (90%)","Có trầy xước nhẹ","Cũ, cần sửa"];
+const REPAIRS=["Lau dầu","Thay kính","Thay dây","Đánh bóng vỏ","Thay pin","Thay ron / chống nước","Thay núm / chốt","Khác"];
+const EXP_CATS=["Quảng cáo TikTok / FB / IG","Ship / vận chuyển","Phí sàn / phí thanh toán","Hộp, bao bì, quà tặng","Phụ tùng / dụng cụ chung","Mặt bằng / điện nước","Khác"];
+const BRANDS=["Seiko","Grand Seiko","Citizen","Orient","Casio","Omega","Longines","Tissot","Rolex","Tudor","Rado","Hamilton","Bulova","Cartier","Tag Heuer","Oris","Zenith","Jaeger-LeCoultre","Patek Philippe","Audemars Piguet","Credor","King Seiko","Lord Marvel"];
+const OLD_DAYS=60;
+
+const S={view:"dash",watches:[],costs:new Map(),exps:[],orders:[],owner:false,email:"",q:"",fSt:"_stock",fBrand:"",sort:"new",invTab:"grid",saleTab:"orders",period:"month",gi:0,needSetup:false};
+let sb=null;
+
+function toast(msg,err){const t=document.createElement("div");t.className="toast"+(err?" err":"");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),err?5200:2600)}
+function fail(e){console.error(e);toast("Lỗi: "+(e?.message||e),true)}
+
+// ---------- dữ liệu suy ra ----------
+const photoUrl=p=>p?`${CFG.SUPABASE_URL}/storage/v1/object/public/photos/${p.split("/").map(encodeURIComponent).join("/")}`:"";
+const cover=(w,big)=>{const p=(w.photos||[])[0];return p?photoUrl(big?p.p:(p.t||p.p)):""};
+const nameOf=w=>[w.brand,w.model].filter(Boolean).join(" ")||"Chưa đặt tên";
+const holdExpired=w=>w.status==="Đang giữ (đơn web)"&&w.hold_until&&new Date(w.hold_until)<new Date();
+const stOf=w=>holdExpired(w)?"Sẵn sàng bán":(w.status||"Mới nhập");
+const inStock=w=>stOf(w)!=="Đã bán";
+const costRow=w=>S.costs.get(w.id)||{buy_price:0,buy_from:"",repairs:[]};
+const repairSum=w=>(costRow(w).repairs||[]).reduce((a,r)=>a+(Number(r.amount)||0),0);
+const costOf=w=>(Number(costRow(w).buy_price)||0)+repairSum(w);
+const profitOf=w=>(Number(w.sale_price)||0)-costOf(w);
+const pill=w=>{const s=stOf(w);return `<span class="pill ${ST_CLS[s]||"st-new"}">${esc(s==="Đang giữ (đơn web)"?"Giữ hàng (web)":s)}</span>`};
+const imgTag=(w,cls="thumb")=>{const u=cover(w);return u?`<img class="${cls}" src="${esc(u)}" alt="" loading="lazy">`:`<div class="${cls} noimg"></div>`};
+function inPeriod(d,p){if(!d)return false;const t=todayISO();if(p==="all")return true;if(p==="month")return monthOf(d)===monthOf(t);if(p==="last"){const x=new Date(t);x.setDate(1);x.setMonth(x.getMonth()-1);return monthOf(d)===monthOf(isoOf(x))}if(p==="year")return d.slice(0,4)===t.slice(0,4);if(p==="6m"){const x=new Date(t);x.setDate(1);x.setMonth(x.getMonth()-5);return d>=isoOf(x)}return true}
+const PERIODS={month:"Tháng này",last:"Tháng trước","6m":"6 tháng gần nhất",year:"Năm nay",all:"Tất cả"};
+
+// ---------- ảnh ----------
+async function compress(file,max,q){
+  const bmp=await (window.createImageBitmap?createImageBitmap(file).catch(()=>null):null)||await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error("Không đọc được ảnh "+file.name));i.src=URL.createObjectURL(file)});
+  const w=bmp.width,h=bmp.height,k=Math.min(1,max/Math.max(w,h));const c=document.createElement("canvas");c.width=Math.round(w*k);c.height=Math.round(h*k);
+  c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,"image/jpeg",q));
+}
+async function uploadPhoto(id,file){
+  const base=`${id}/${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+  const [big,small]=await Promise.all([compress(file,1600,.84),compress(file,480,.8)]);
+  const a=await sb.storage.from("photos").upload(base+".jpg",big,{contentType:"image/jpeg"});if(a.error)throw a.error;
+  const b=await sb.storage.from("photos").upload(base+"_t.jpg",small,{contentType:"image/jpeg"});if(b.error)throw b.error;
+  return {p:base+".jpg",t:base+"_t.jpg"};
+}
+function nextIds(n){let m=0;S.watches.forEach(w=>{const k=parseInt(String(w.id).replace(/\D/g,""),10);if(k>m)m=k});return Array.from({length:n},(_,i)=>"TT"+String(m+1+i).padStart(3,"0"))}
+
+// ---------- tải dữ liệu ----------
+async function load(){
+  const [w,c,e,o]=await Promise.all([
+    sb.from("watches").select("*").order("created_at",{ascending:false}),
+    S.owner?sb.from("watch_costs").select("*"):Promise.resolve({data:[]}),
+    S.owner?sb.from("tt_expenses").select("*").order("date",{ascending:false}):Promise.resolve({data:[]}),
+    sb.from("tt_orders").select("*").order("created_at",{ascending:false}).limit(300)]);
+  if(w.error){if(/relation|does not exist|schema cache/i.test(w.error.message)){S.needSetup=true;S.watches=[]}else throw w.error}else S.needSetup=false;
+  S.watches=(w.data||[]).map(x=>({...x,photos:Array.isArray(x.photos)?x.photos:[],accessories:Array.isArray(x.accessories)?x.accessories:[]}));
+  S.costs=new Map((c.data||[]).map(r=>[r.watch_id,{...r,repairs:Array.isArray(r.repairs)?r.repairs:[]}]));
+  S.exps=e.data||[];S.orders=o.error?[]:(o.data||[]);
+}
+async function reload(){try{await load();render();const id=$(".md[data-wid]")?.dataset.wid;if(id&&S.watches.find(x=>x.id===id))openWatch(id,true)}catch(e){fail(e)}}
+
+// ---------- khung ----------
+const IC={
+ dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+ inv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="6"/><path d="M12 9v3l2 1.5M9 6.5 9.8 3h4.4l.8 3.5M9 17.5l.8 3.5h4.4l.8-3.5"/></svg>',
+ orders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h7.6a1.5 1.5 0 0 0 1.5-1.1L20.5 9H7"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>',
+ sold:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H8a2.5 2.5 0 1 1 0-5c3 0 4 5 4 5zM12 7h4a2.5 2.5 0 1 0 0-5c-3 0-4 5-4 5z"/></svg>',
+ exp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>',
+ rep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'};
+function navItems(){const wait=S.orders.filter(o=>o.status==="Chờ thanh toán").length;const it=[["dash","Tổng quan"],["inv","Kho đồng hồ"],["orders","Đơn web",wait],["sold","Đã bán & khách"]];if(S.owner)it.push(["exp","Chi phí shop"],["rep","Báo cáo lãi"]);return it}
+const LOGO='<svg width="34" height="34" viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="#C9A46A" stroke-width="3.5"/><circle cx="32" cy="32" r="16" fill="none" stroke="#C9A46A" stroke-width="1" opacity=".55"/><path d="M32 18v14l9 6" stroke="#C9A46A" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>';
+function shell(inner){
+  const it=navItems();
+  return `<div class="app"><aside class="side"><div class="brand">${LOGO}<div><b>TimelessTouch</b><small>Kho đồng hồ</small></div></div>
+  <div class="mtop"><button class="btn sm ghost" style="color:var(--side-ink);border-color:var(--side-2)" data-act="logout">Thoát</button></div>
+  <nav class="nav">${it.map(([k,l,b])=>`<button type="button" data-view="${k}" ${S.view===k?'aria-current="page"':""}>${IC[k]}<span>${l}</span>${b?`<span class="badge">${b}</span>`:""}</button>`).join("")}</nav>
+  <div class="me"><span class="role">${S.owner?"Chủ shop":"Nhân viên"}</span><span>${esc(S.email)}</span><button type="button" data-act="logout">Đăng xuất</button></div></aside>
+  <main>${S.needSetup?`<div class="banner"><b>Chưa có bảng dữ liệu.</b> Mở Supabase → SQL Editor, dán và chạy file <code>timeless/supabase.sql</code>.</div>`:""}${inner}</main>
+  <nav class="mb-nav">${it.map(([k,l,b])=>`<button type="button" data-view="${k}" ${S.view===k?'aria-current="page"':""}>${IC[k]}<span>${({inv:"Kho",sold:"Đã bán",exp:"Chi phí",rep:"Báo cáo",dash:"Tổng quan",orders:"Đơn web"})[k]}</span>${b?`<span class="badge">${b}</span>`:""}</button>`).join("")}</nav></div>`;
+}
+function render(){
+  const v={dash:vDash,inv:vInv,orders:vOrders,sold:vSold,exp:vExp,rep:vRep}[S.view]||vDash;
+  if((S.view==="exp"||S.view==="rep")&&!S.owner)S.view="dash";
+  $("#root").innerHTML=shell(v());
+}
+
+// ---------- Tổng quan ----------
+function vDash(){
+  const stock=S.watches.filter(inStock), t=todayISO();
+  const by=s=>stock.filter(w=>stOf(w)===s).length;
+  const soldM=S.watches.filter(w=>stOf(w)==="Đã bán"&&inPeriod(w.sold_date,"month"));
+  const rev=soldM.reduce((a,w)=>a+(Number(w.sale_price)||0),0);
+  const gp=soldM.reduce((a,w)=>a+profitOf(w),0);
+  const expM=S.exps.filter(e=>inPeriod(e.date,"month")).reduce((a,e)=>a+(Number(e.amount)||0),0);
+  const capital=stock.reduce((a,w)=>a+costOf(w),0), listV=stock.reduce((a,w)=>a+(Number(w.list_price)||0),0);
+  const old=stock.filter(w=>daysSince(w.in_date||w.created_at)>=OLD_DAYS).sort((a,b)=>daysSince(b.in_date||b.created_at)-daysSince(a.in_date||a.created_at));
+  const holds=stock.filter(w=>["Khách đã cọc","Đang giữ (đơn web)"].includes(stOf(w)));
+  const wait=S.orders.filter(o=>o.status==="Chờ thanh toán");
+  const recent=S.watches.filter(w=>stOf(w)==="Đã bán").sort((a,b)=>(b.sold_date||"").localeCompare(a.sold_date||"")).slice(0,6);
+  const ch={};soldM.forEach(w=>{const k=w.channel||"Khác";ch[k]=ch[k]||{n:0,v:0};ch[k].n++;ch[k].v+=Number(w.sale_price)||0});
+  const chMax=Math.max(1,...Object.values(ch).map(x=>x.v));
+  return `<div class="head"><div><h1>Tổng quan</h1><p>${new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p></div>
+  <div class="btns"><button class="btn" type="button" data-act="quick">Nhập nhanh từ ảnh</button><button class="btn pri" type="button" data-act="add">+ Thêm đồng hồ</button></div></div>
+  ${wait.length?`<div class="banner" style="background:var(--info-soft);color:var(--info)"><b>${wait.length} đơn web đang chờ thanh toán.</b> <a href="#" data-view="orders">Xem đơn →</a></div>`:""}
+  <div class="kpis">
+   <div class="card kpi"><div class="l">Đang trong kho</div><div class="v num">${stock.length} <span style="font-size:15px;font-weight:500;color:var(--muted)">chiếc</span></div><div class="s">${by("Sẵn sàng bán")} sẵn bán · ${by("Đang sửa / lau dầu")} đang sửa · ${by("Mới nhập")} mới nhập · ${holds.length} cọc/giữ</div></div>
+   ${S.owner?`<div class="card kpi"><div class="l">Vốn nằm trong kho<span class="lock">Chỉ chị thấy</span></div><div class="v num">${fmtM(capital)}</div><div class="s">Giá niêm yết: ${fmtM(listV)} · lãi dự kiến ${fmtM(listV-capital)}</div></div>`:`<div class="card kpi"><div class="l">Giá niêm yết hàng trong kho</div><div class="v num">${fmtM(listV)}</div><div class="s">${stock.filter(w=>!w.list_price).length} chiếc chưa có giá</div></div>`}
+   <div class="card kpi"><div class="l">Bán tháng này</div><div class="v num">${soldM.length} <span style="font-size:15px;font-weight:500;color:var(--muted)">chiếc</span></div><div class="s">Doanh thu ${fmtM(rev)}</div></div>
+   ${S.owner?`<div class="card kpi"><div class="l">Lãi tháng này<span class="lock">Chỉ chị thấy</span></div><div class="v num" style="color:${gp-expM<0?"var(--neg)":"var(--pos)"}">${fmtM(gp-expM)}</div><div class="s">Lãi bán hàng ${fmtM(gp)} − chi phí shop ${fmtM(expM)}</div></div>`:""}
+  </div>
+  <div class="two">
+   <div class="grid">
+    <div class="card"><div class="card-h"><h2>Hàng để lâu (từ ${OLD_DAYS} ngày)</h2><span class="sub">${old.length} chiếc</span></div><div class="card-b">${old.length?`<div class="list">${old.slice(0,8).map(w=>miniRow(w,`<span class="old">${daysSince(w.in_date||w.created_at)} ngày</span>`)).join("")}</div>`:`<div class="sub">Không có chiếc nào tồn quá ${OLD_DAYS} ngày.</div>`}</div></div>
+    <div class="card"><div class="card-h"><h2>Bán gần đây</h2><a href="#" data-view="sold" class="sub">Xem tất cả</a></div><div class="card-b">${recent.length?`<div class="list">${recent.map(w=>miniRow(w,`<b class="num">${fmtM(w.sale_price)}</b>${S.owner?`<div class="sub num" style="color:${profitOf(w)<0?"var(--neg)":"var(--pos)"}">lãi ${fmtM(profitOf(w))}</div>`:""}`)).join("")}</div>`:`<div class="sub">Chưa có chiếc nào bán.</div>`}</div></div>
+   </div>
+   <div class="grid">
+    <div class="card"><div class="card-h"><h2>Khách đã cọc / đang giữ</h2><span class="sub">${holds.length}</span></div><div class="card-b">${holds.length?`<div class="list">${holds.map(w=>miniRow(w,`<span class="sub">${esc(w.buyer_name||"")}${w.deposit?" · cọc "+fmtM(w.deposit):""}</span>`)).join("")}</div>`:`<div class="sub">Không có.</div>`}</div></div>
+    <div class="card"><div class="card-h"><h2>Bán theo kênh · tháng này</h2></div><div class="card-b">${Object.keys(ch).length?`<div class="list">${Object.entries(ch).sort((a,b)=>b[1].v-a[1].v).map(([k,x])=>`<div class="hbar"><span>${esc(k)}</span><div class="tr"><div class="fl" style="width:${Math.max(4,x.v/chMax*100)}%"></div></div><span class="r num">${x.n} · ${fmtM(x.v)}</span></div>`).join("")}</div>`:`<div class="sub">Tháng này chưa bán chiếc nào.</div>`}</div></div>
+   </div>
+  </div>`;
+}
+const miniRow=(w,right)=>`<div class="mini" data-w="${esc(w.id)}">${imgTag(w,"")}<div style="flex:1;min-width:0"><div class="t">${esc(nameOf(w))}</div><div class="s">${esc(w.id)}${w.ref?" · "+esc(w.ref):""} · ${pill(w)}</div></div><div class="r">${right||""}</div></div>`;
+
+// ---------- Kho ----------
+function invList(){
+  const q=S.q.trim().toLowerCase();
+  const sorts={new:(a,b)=>(b.in_date||b.created_at||"").localeCompare(a.in_date||a.created_at||""),old:(a,b)=>(a.in_date||a.created_at||"").localeCompare(b.in_date||b.created_at||""),hi:(a,b)=>(b.list_price||0)-(a.list_price||0),lo:(a,b)=>(a.list_price||0)-(b.list_price||0)};
+  return S.watches.filter(w=>(S.fSt==="_stock"?inStock(w):S.fSt==="_all"?true:stOf(w)===S.fSt)&&(!S.fBrand||w.brand===S.fBrand)&&(!q||[w.id,w.brand,w.model,w.ref,w.year,w.note,w.buyer_name,w.buyer_phone,w.material].join(" ").toLowerCase().includes(q))).sort(sorts[S.sort]);
+}
+function vInv(){
+  const list=invList();const brands=[...new Set(S.watches.map(w=>w.brand).filter(Boolean))].sort();
+  const stock=S.watches.filter(inStock);
+  return `<div class="head"><div><h1>Kho đồng hồ</h1><p>${stock.length} chiếc trong kho · bấm một chiếc để xem ảnh, sửa, ghi cọc hoặc bán</p></div>
+  <div class="btns"><button class="btn" type="button" data-act="quick">Nhập nhanh từ ảnh</button><button class="btn pri" type="button" data-act="add">+ Thêm đồng hồ</button></div></div>
+  <div class="bar"><input class="ctl q" id="q" type="search" placeholder="Tìm mã, hãng, mẫu, ref, tên khách…" value="${esc(S.q)}">
+   <select class="ctl" id="fSt"><option value="_stock">Đang trong kho</option><option value="_all"${S.fSt==="_all"?" selected":""}>Tất cả (cả đã bán)</option>${STATUSES.map(s=>`<option${S.fSt===s?" selected":""}>${s}</option>`).join("")}</select>
+   <select class="ctl" id="fBrand"><option value="">Mọi hãng</option>${brands.map(b=>`<option${S.fBrand===b?" selected":""}>${esc(b)}</option>`).join("")}</select>
+   <select class="ctl" id="sort"><option value="new">Mới nhập trước</option><option value="old"${S.sort==="old"?" selected":""}>Để lâu nhất trước</option><option value="hi"${S.sort==="hi"?" selected":""}>Giá cao → thấp</option><option value="lo"${S.sort==="lo"?" selected":""}>Giá thấp → cao</option></select>
+   <div class="tabs" role="tablist"><button type="button" role="tab" data-invtab="grid" aria-selected="${S.invTab==="grid"}">Ảnh</button><button type="button" role="tab" data-invtab="board" aria-selected="${S.invTab==="board"}">Theo trạng thái</button></div></div>
+  ${S.invTab==="board"?board():list.length?`<div class="wgrid">${list.map(card).join("")}</div>`:`<div class="card empty">${S.watches.length?"Không có chiếc nào khớp bộ lọc.":`Kho đang trống. Bấm <b>Nhập nhanh từ ảnh</b> để chọn ảnh đồng hồ trong máy — mỗi ảnh thành một chiếc, thông tin điền sau.`}</div>`}`;
+}
+function card(w){
+  const d=daysSince(w.in_date||w.created_at);
+  return `<div class="w" data-w="${esc(w.id)}"><div class="ph">${cover(w)?`<img src="${esc(cover(w))}" alt="${esc(nameOf(w))}" loading="lazy">`:`<div class="noph"><span style="font-size:26px">⌚</span>Chưa có ảnh</div>`}${pill(w)}${(w.photos||[]).length>1?`<span class="cnt">${w.photos.length} ảnh</span>`:""}</div>
+  <div class="bd"><span class="code">${esc(w.id)}${w.ref?" · "+esc(w.ref):""}</span><span class="nm">${esc(nameOf(w))}</span>
+  <span class="pr num">${stOf(w)==="Đã bán"?`Đã bán ${fmtM(w.sale_price)}`:w.list_price?fmt(w.list_price)+" ₫":`<span class="sub">Chưa có giá</span>`}</span>
+  <span class="meta"><span>${esc(w.year||w.movement||"")}</span>${inStock(w)?`<span class="${d>=OLD_DAYS?"old":""}">${d} ngày</span>`:`<span>${dmy(w.sold_date)}</span>`}</span></div></div>`;
+}
+function board(){
+  const q=S.q.trim().toLowerCase();
+  const all=S.watches.filter(w=>(!S.fBrand||w.brand===S.fBrand)&&(!q||[w.id,w.brand,w.model,w.ref,w.year,w.note,w.buyer_name].join(" ").toLowerCase().includes(q)));
+  const cols=[["Mới nhập",w=>stOf(w)==="Mới nhập"],["Đang sửa / lau dầu",w=>stOf(w)==="Đang sửa / lau dầu"],["Sẵn sàng bán",w=>stOf(w)==="Sẵn sàng bán"],["Cọc / giữ hàng",w=>["Khách đã cọc","Đang giữ (đơn web)"].includes(stOf(w))],["Đã bán (gần đây)",w=>stOf(w)==="Đã bán"]];
+  return `<div class="board">${cols.map(([t,f],i)=>{let it=all.filter(f);if(i===4)it=it.sort((a,b)=>(b.sold_date||"").localeCompare(a.sold_date||"")).slice(0,10);return `<div class="col"><h3><span>${t}</span><span>${it.length}</span></h3>${it.map(w=>`<div class="mini" data-w="${esc(w.id)}">${imgTag(w,"")}<div style="min-width:0"><div class="t">${esc(nameOf(w))}</div><div class="s num">${esc(w.id)} · ${i===4?fmtM(w.sale_price):w.list_price?fmtM(w.list_price):"chưa giá"}</div></div></div>`).join("")||`<div class="sub" style="padding:4px">—</div>`}</div>`}).join("")}</div>`;
+}
+
+// ---------- Chi tiết 1 chiếc ----------
+function openWatch(id,keep){
+  const w=S.watches.find(x=>x.id===id);if(!w)return;const ph=w.photos||[];if(!keep)S.gi=0;if(S.gi>=ph.length)S.gi=0;
+  const c=costRow(w), cost=costOf(w), st=stOf(w);
+  const order=S.orders.find(o=>o.watch_id===id&&o.status==="Chờ thanh toán");
+  const html=`<div class="md" data-wid="${esc(id)}"><div class="md-h"><div><span class="sub">${esc(w.id)}${w.ref?" · Ref "+esc(w.ref):""}</span><h2>${esc(nameOf(w))}</h2></div><button class="x" type="button" data-act="close" aria-label="Đóng">×</button></div>
+  <div class="md-b"><div class="det">
+   <div class="gal"><div class="main">${ph.length?`<img src="${esc(photoUrl(ph[S.gi].p))}" alt="">`:`<div class="noph"><span style="font-size:40px">⌚</span>Chưa có ảnh — bấm “+ Ảnh” để thêm</div>`}</div>
+    <div class="ths">${ph.map((p,i)=>`<div class="th ${i===S.gi?"on":""}" data-gi="${i}"><img src="${esc(photoUrl(p.t||p.p))}" alt="">${i===0?'<span class="cov">BÌA</span>':""}</div>`).join("")}<label class="add">+ Ảnh<input type="file" accept="image/*" multiple hidden id="addPh"></label></div>
+    ${ph.length?`<div class="tools">${S.gi>0?`<button class="btn sm" type="button" data-act="cover">Đặt làm ảnh bìa</button>`:""}<button class="btn sm ghost danger" type="button" data-act="delph">Xoá ảnh này</button><a class="btn sm ghost" href="${esc(photoUrl(ph[S.gi].p))}" target="_blank" rel="noopener">Mở ảnh gốc</a></div>`:""}
+    <div class="prog" id="phProg"></div></div>
+   <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${pill(w)}<select class="ctl" id="qSt" style="padding:5px 9px;font-size:13px" aria-label="Đổi trạng thái">${STATUSES.filter(s=>s!=="Đã bán"||st==="Đã bán").map(s=>`<option${s===st?" selected":""}>${s}</option>`).join("")}</select>${inStock(w)?`<span class="sub">${daysSince(w.in_date||w.created_at)} ngày trong kho</span>`:""}</div>
+    ${order?`<div class="banner" style="background:var(--info-soft);color:var(--info);margin:0">Đơn web <b>${esc(order.id)}</b> của ${esc(order.name)} (${esc(order.phone)}) đang chờ thanh toán ${fmt(order.amount)} ₫. <a href="#" data-view="orders" data-act="close">Xử lý đơn</a></div>`:""}
+    <div class="box"><h3>Giá bán niêm yết</h3><div class="big num">${w.list_price?fmt(w.list_price)+" ₫":"<span class='sub' style='font-size:15px'>Chưa đặt giá</span>"}</div>
+     ${w.show_on_shop===false?`<span class="sub">Đang ẩn trên web bán hàng</span>`:st==="Sẵn sàng bán"&&w.list_price?`<span class="sub" style="color:var(--pos)">Đang hiện trên web bán hàng</span>`:""}</div>
+    <dl class="kv">${[["Hãng",w.brand],["Mẫu",w.model],["Ref",w.ref],["Năm",w.year],["Bộ máy",w.movement],["Size",w.size],["Chất liệu",w.material],["Tình trạng",w.condition],["Phụ kiện",(w.accessories||[]).join(", ")],["Ngày nhập",dmy(w.in_date)],["Ghi chú",w.note]].filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")||`<dt>Thông tin</dt><dd class="sub">Chưa điền — bấm “Sửa thông tin”.</dd>`}</dl>
+    ${st==="Đã bán"?`<div class="box"><h3>Đã bán <span>${dmy(w.sold_date)}</span></h3><div class="big num">${fmt(w.sale_price)} ₫</div><dl class="kv">${[["Khách",w.buyer_name],["SĐT",w.buyer_phone],["Facebook / TikTok",w.buyer_social],["Kênh",w.channel],["Thanh toán",w.pay_method],["Bảo hành đến",w.warranty_until?dmy(w.warranty_until)+(w.warranty_until<todayISO()?" (hết)":""):""]].filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>`:""}
+    ${st==="Khách đã cọc"?`<div class="box"><h3>Khách đã cọc <span>${dmy(w.deposit_date)}</span></h3><dl class="kv">${[["Tiền cọc",w.deposit?fmt(w.deposit)+" ₫":""],["Khách",w.buyer_name],["SĐT",w.buyer_phone],["Kênh",w.channel]].filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>`:""}
+    ${S.owner?`<div class="box own"><h3>Giá vốn & lãi <span class="lock" style="margin:0">Chỉ chị thấy</span></h3>
+      <div class="rep"><span>Giá nhập${c.buy_from?" · từ "+esc(c.buy_from):""}</span><b class="num">${fmt(c.buy_price)} ₫</b></div>
+      ${(c.repairs||[]).map((r,i)=>`<div class="rep"><span>${esc(r.what)}${r.date?" · "+dmy(r.date):""} <button class="btn sm ghost danger" style="padding:0 6px" type="button" data-delrep="${i}" aria-label="Xoá">×</button></span><span class="num">${fmt(r.amount)} ₫</span></div>`).join("")}
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><select class="ctl" id="rpW" style="flex:1 1 130px;padding:6px 9px">${REPAIRS.map(r=>`<option>${r}</option>`).join("")}</select><input class="ctl num" id="rpA" inputmode="numeric" placeholder="Số tiền" style="flex:1 1 100px;padding:6px 9px"><button class="btn sm" type="button" data-act="addrep">+ Chi phí sửa</button></div>
+      <div class="rep" style="border:0"><span><b>Giá vốn</b></span><b class="num">${fmt(cost)} ₫</b></div>
+      ${st==="Đã bán"?`<div class="rep" style="border:0"><span><b>Lãi thực tế</b></span><b class="num" style="color:${profitOf(w)<0?"var(--neg)":"var(--pos)"}">${fmt(profitOf(w))} ₫</b></div>`:w.list_price?`<div class="rep" style="border:0"><span>Lãi nếu bán đúng giá niêm yết</span><b class="num">${fmt(w.list_price-cost)} ₫ ${cost?`(${Math.round((w.list_price-cost)/cost*100)}%)`:""}</b></div>`:""}
+    </div>`:""}
+   </div></div></div>
+  <div class="md-f">${S.owner?`<button class="btn ghost danger" type="button" data-act="delw" style="margin-right:auto">Xoá chiếc này</button>`:""}
+   <button class="btn" type="button" data-act="edit">Sửa thông tin</button>
+   ${st==="Đã bán"?`<button class="btn" type="button" data-act="unsell">Huỷ bán (trả về kho)</button>`:`${st!=="Khách đã cọc"?`<button class="btn" type="button" data-act="deposit">Ghi cọc</button>`:`<button class="btn" type="button" data-act="undep">Huỷ cọc</button>`}<button class="btn gold" type="button" data-act="sell">Bán chiếc này</button>`}</div></div>`;
+  modal(html);
+}
+function modal(html){closeModal();const o=document.createElement("div");o.className="ov";o.innerHTML=html;o.addEventListener("mousedown",e=>{if(e.target===o)closeModal()});document.body.appendChild(o);document.body.style.overflow="hidden"}
+function closeModal(){$$(".ov").forEach(x=>x.remove());document.body.style.overflow=""}
+
+// ---------- form thêm / sửa ----------
+function watchForm(id){
+  const w=id?S.watches.find(x=>x.id===id):{in_date:todayISO(),status:"Mới nhập",accessories:[],show_on_shop:true};const c=id?costRow(w):{};
+  modal(`<div class="md sm"><div class="md-h"><h2>${id?"Sửa "+esc(id):"Thêm đồng hồ"}</h2><button class="x" type="button" data-act="close">×</button></div>
+  <form id="wf" class="md-b form" data-id="${esc(id||"")}">
+   <label>Hãng<input class="ctl" name="brand" list="brands" value="${esc(w.brand)}" placeholder="Seiko, Omega…"></label>
+   <label>Mẫu / dòng<input class="ctl" name="model" value="${esc(w.model)}" placeholder="vd 5 Sports, Seamaster…"></label>
+   <label>Ref / mã máy<input class="ctl" name="ref" value="${esc(w.ref)}" placeholder="vd 6309-7040"></label>
+   <label>Năm sản xuất<input class="ctl" name="year" value="${esc(w.year)}" placeholder="vd 1978"></label>
+   <label>Bộ máy<select class="ctl" name="movement"><option value=""></option>${MOVES.map(m=>`<option${w.movement===m?" selected":""}>${m}</option>`).join("")}</select></label>
+   <label>Size mặt<input class="ctl" name="size" value="${esc(w.size)}" placeholder="vd 38mm"></label>
+   <label>Chất liệu vỏ / dây<input class="ctl" name="material" value="${esc(w.material)}" placeholder="Thép, mạ vàng, da…"></label>
+   <label>Tình trạng<select class="ctl" name="condition"><option value=""></option>${CONDS.map(m=>`<option${w.condition===m?" selected":""}>${m}</option>`).join("")}${w.condition&&!CONDS.includes(w.condition)?`<option selected>${esc(w.condition)}</option>`:""}</select></label>
+   <div class="full"><div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px">Phụ kiện kèm theo</div><div class="chips">${ACCS.map(a=>`<label class="chip"><input type="checkbox" name="acc" value="${a}" ${(w.accessories||[]).includes(a)?"checked":""}>${a}</label>`).join("")}</div></div>
+   <label>Giá bán niêm yết (₫)<input class="ctl num" name="list_price" inputmode="numeric" value="${w.list_price?fmt(w.list_price):""}" data-money></label>
+   <label>Ngày nhập<input class="ctl" type="date" name="in_date" value="${esc((w.in_date||"").slice(0,10))}"></label>
+   ${id?"":`<label>Trạng thái<select class="ctl" name="status">${STATUSES.slice(0,3).map(s=>`<option${w.status===s?" selected":""}>${s}</option>`).join("")}</select></label>`}
+   <label class="${id?"":""}">Hiện trên web bán hàng<select class="ctl" name="show_on_shop"><option value="1">Có (khi Sẵn sàng bán)</option><option value="0"${w.show_on_shop===false?" selected":""}>Ẩn</option></select></label>
+   <label class="full">Mô tả cho khách (hiện trên web)<textarea class="ctl" name="shop_desc" rows="2" placeholder="vd Máy chạy khoẻ, vừa lau dầu, mặt zin…">${esc(w.shop_desc)}</textarea></label>
+   <label class="full">Ghi chú nội bộ<textarea class="ctl" name="note" rows="2">${esc(w.note)}</textarea></label>
+   ${S.owner?`<div class="sec">Chỉ chị thấy</div><label>Giá nhập (₫)<input class="ctl num" name="buy_price" inputmode="numeric" value="${c.buy_price?fmt(c.buy_price):""}" data-money></label><label>Nhập từ ai / ở đâu<input class="ctl" name="buy_from" value="${esc(c.buy_from)}" placeholder="vd Mua lại từ khách, hàng Nhật…"></label>`:""}
+   ${id?"":`<label class="full">Ảnh (chọn nhiều ảnh được)<input class="ctl" type="file" name="files" accept="image/*" multiple></label>`}
+   <datalist id="brands">${[...new Set([...BRANDS,...S.watches.map(x=>x.brand).filter(Boolean)])].map(b=>`<option value="${esc(b)}">`).join("")}</datalist>
+  </form><div class="md-f"><span class="prog" id="wfProg" style="margin:0 auto 0 0"></span><button class="btn" type="button" data-act="close">Huỷ</button><button class="btn pri" type="submit" form="wf">Lưu</button></div></div>`);
+}
+async function saveWatch(f){
+  const fd=new FormData(f), id=f.dataset.id;const btn=$('button[form="wf"]');btn.disabled=true;
+  const row={brand:fd.get("brand").trim(),model:fd.get("model").trim(),ref:fd.get("ref").trim(),year:fd.get("year").trim(),movement:fd.get("movement"),size:fd.get("size").trim(),material:fd.get("material").trim(),condition:fd.get("condition"),accessories:fd.getAll("acc"),list_price:num(fd.get("list_price")),in_date:fd.get("in_date")||null,note:fd.get("note").trim(),shop_desc:fd.get("shop_desc").trim(),show_on_shop:fd.get("show_on_shop")==="1",updated_at:new Date().toISOString()};
+  try{
+    let wid=id;
+    if(id){const r=await sb.from("watches").update(row).eq("id",id);if(r.error)throw r.error}
+    else{wid=nextIds(1)[0];const files=[...(f.files?.files||[])];const photos=[];const pr=$("#wfProg");
+      for(let i=0;i<files.length;i++){pr.textContent=`Đang tải ảnh ${i+1}/${files.length}…`;photos.push(await uploadPhoto(wid,files[i]))}
+      const r=await sb.from("watches").insert({...row,id:wid,status:fd.get("status")||"Mới nhập",photos,created_by:S.email});if(r.error)throw r.error}
+    if(S.owner){const bp=num(fd.get("buy_price")),bf=fd.get("buy_from").trim();const old=S.costs.get(wid);if(bp||bf||old){const r=await sb.from("watch_costs").upsert({watch_id:wid,buy_price:bp,buy_from:bf,repairs:old?.repairs||[],updated_at:new Date().toISOString()});if(r.error)throw r.error}}
+    toast(id?"Đã lưu":"Đã thêm "+wid);closeModal();await load();render();openWatch(wid);
+  }catch(e){fail(e);btn.disabled=false}
+}
+
+// ---------- nhập nhanh từ ảnh ----------
+function quickForm(){
+  modal(`<div class="md sm"><div class="md-h"><h2>Nhập nhanh từ ảnh</h2><button class="x" type="button" data-act="close">×</button></div>
+  <form id="qf" class="md-b form">
+   <label class="full">Chọn ảnh đồng hồ trong máy / điện thoại<input class="ctl" type="file" name="files" accept="image/*" multiple required></label>
+   <div class="full"><div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px">Cách tạo</div><div class="chips">
+    <label class="chip"><input type="radio" name="mode" value="each" checked>Mỗi ảnh là 1 chiếc</label>
+    <label class="chip"><input type="radio" name="mode" value="one">Tất cả ảnh là 1 chiếc</label></div></div>
+   <label>Hãng (nếu cùng hãng)<input class="ctl" name="brand" list="brands2" placeholder="Bỏ trống, điền sau"></label>
+   <label>Trạng thái<select class="ctl" name="status">${STATUSES.slice(0,3).map(s=>`<option>${s}</option>`).join("")}</select></label>
+   <p class="full sub" style="margin:0">Ảnh được nén nhỏ (~200–300KB) trước khi tải lên. Sau đó chị bấm từng chiếc để điền mẫu, giá nhập, giá bán.</p>
+   <datalist id="brands2">${BRANDS.map(b=>`<option value="${b}">`).join("")}</datalist>
+  </form><div class="md-f"><span class="prog" id="qfProg" style="margin:0 auto 0 0"></span><button class="btn" type="button" data-act="close">Huỷ</button><button class="btn pri" type="submit" form="qf">Tạo</button></div></div>`);
+}
+async function quickSave(f){
+  const fd=new FormData(f);const files=[...f.files.files];if(!files.length)return;const btn=$('button[form="qf"]');btn.disabled=true;const pr=$("#qfProg");
+  const each=fd.get("mode")==="each";const ids=nextIds(each?files.length:1);let done=0;
+  try{
+    if(each){for(let i=0;i<files.length;i++){pr.textContent=`Đang tạo ${i+1}/${files.length}…`;const p=await uploadPhoto(ids[i],files[i]);const r=await sb.from("watches").insert({id:ids[i],brand:fd.get("brand").trim(),status:fd.get("status"),photos:[p],in_date:todayISO(),created_by:S.email});if(r.error)throw r.error;done++}}
+    else{const ph=[];for(let i=0;i<files.length;i++){pr.textContent=`Đang tải ảnh ${i+1}/${files.length}…`;ph.push(await uploadPhoto(ids[0],files[i]))}const r=await sb.from("watches").insert({id:ids[0],brand:fd.get("brand").trim(),status:fd.get("status"),photos:ph,in_date:todayISO(),created_by:S.email});if(r.error)throw r.error;done=1}
+    toast(`Đã tạo ${done} chiếc`);closeModal();S.view="inv";S.fSt="_stock";S.sort="new";await load();render();
+  }catch(e){fail(e);toast(`Đã tạo ${done} chiếc trước khi lỗi`,true);await load();render()}
+}
+
+// ---------- cọc / bán ----------
+function sellForm(id,dep){
+  const w=S.watches.find(x=>x.id===id);const o=S.orders.find(x=>x.watch_id===id&&x.status==="Chờ thanh toán");
+  modal(`<div class="md sm"><div class="md-h"><h2>${dep?"Ghi cọc":"Bán"} · ${esc(nameOf(w))}</h2><button class="x" type="button" data-act="close">×</button></div>
+  <form id="sf" class="md-b form" data-id="${esc(id)}" data-dep="${dep?1:""}">
+   ${dep?`<label>Tiền cọc (₫)<input class="ctl num" name="deposit" inputmode="numeric" data-money value="${w.deposit?fmt(w.deposit):""}" required></label><label>Ngày cọc<input class="ctl" type="date" name="deposit_date" value="${todayISO()}"></label>`
+   :`<label>Giá bán (₫)<input class="ctl num" name="sale_price" inputmode="numeric" data-money value="${fmt(o?.amount||w.list_price||0)}" required></label><label>Ngày bán<input class="ctl" type="date" name="sold_date" value="${todayISO()}" required></label>`}
+   <label>Tên khách<input class="ctl" name="buyer_name" value="${esc(w.buyer_name||o?.name||"")}"></label>
+   <label>SĐT khách<input class="ctl" name="buyer_phone" inputmode="tel" value="${esc(w.buyer_phone||o?.phone||"")}"></label>
+   <label class="full">Facebook / TikTok / Instagram của khách<input class="ctl" name="buyer_social" value="${esc(w.buyer_social||"")}" placeholder="Tên nick hoặc link"></label>
+   <label>Khách đến từ kênh<select class="ctl" name="channel">${CHANNELS.map(c=>`<option${(w.channel||(o?"Website":""))===c?" selected":""}>${c}</option>`).join("")}</select></label>
+   ${dep?"":`<label>Thanh toán<select class="ctl" name="pay_method">${PAYS.map(c=>`<option${w.pay_method===c?" selected":""}>${c}</option>`).join("")}</select></label>
+   <label>Bảo hành<select class="ctl" name="wm"><option value="0">Không bảo hành</option><option value="1">1 tháng</option><option value="3">3 tháng</option><option value="6" selected>6 tháng</option><option value="12">12 tháng</option></select></label>`}
+  </form><div class="md-f"><button class="btn" type="button" data-act="close">Huỷ</button><button class="btn ${dep?"pri":"gold"}" type="submit" form="sf">${dep?"Lưu cọc":"Xác nhận đã bán"}</button></div></div>`);
+}
+async function saveSell(f){
+  const fd=new FormData(f),id=f.dataset.id,dep=!!f.dataset.dep;
+  const row={buyer_name:fd.get("buyer_name").trim(),buyer_phone:fd.get("buyer_phone").trim(),buyer_social:fd.get("buyer_social").trim(),channel:fd.get("channel"),updated_at:new Date().toISOString()};
+  if(dep)Object.assign(row,{status:"Khách đã cọc",deposit:num(fd.get("deposit")),deposit_date:fd.get("deposit_date")||todayISO()});
+  else{const sd=fd.get("sold_date")||todayISO();const wm=Number(fd.get("wm"));Object.assign(row,{status:"Đã bán",sale_price:num(fd.get("sale_price")),sold_date:sd,pay_method:fd.get("pay_method"),warranty_until:wm?addMonths(sd,wm):null,hold_until:null})}
+  try{const r=await sb.from("watches").update(row).eq("id",id);if(r.error)throw r.error;
+    if(!dep){const o=S.orders.find(x=>x.watch_id===id&&x.status==="Chờ thanh toán");if(o)await sb.from("tt_orders").update({status:"Đã thanh toán",paid_at:new Date().toISOString()}).eq("id",o.id)}
+    toast(dep?"Đã ghi cọc":"Đã bán · chiếc này rời khỏi kho");await load();render();openWatch(id)}catch(e){fail(e)}
+}
+async function patchW(id,row,msg){try{const r=await sb.from("watches").update({...row,updated_at:new Date().toISOString()}).eq("id",id);if(r.error)throw r.error;if(msg)toast(msg);await load();render();if(S.watches.find(x=>x.id===id))openWatch(id,true)}catch(e){fail(e)}}
+async function saveCosts(w,repairs){const c=costRow(w);try{const r=await sb.from("watch_costs").upsert({watch_id:w.id,buy_price:c.buy_price||0,buy_from:c.buy_from||"",repairs,updated_at:new Date().toISOString()});if(r.error)throw r.error;await load();render();openWatch(w.id,true)}catch(e){fail(e)}}
+
+// ---------- Đơn web ----------
+function vOrders(){
+  const wait=S.orders.filter(o=>o.status==="Chờ thanh toán"), other=S.orders.filter(o=>o.status!=="Chờ thanh toán");
+  const row=o=>{const w=S.watches.find(x=>x.id===o.watch_id);const exp=w&&w.hold_until&&new Date(w.hold_until)<new Date()&&o.status==="Chờ thanh toán";
+    return `<div class="order ${o.status==="Chờ thanh toán"?"wait":""}">${w?imgTag(w):'<div class="thumb"></div>'}<div style="flex:1;min-width:0"><div><b>${esc(o.id)}</b> · ${esc(w?nameOf(w):o.watch_id||"")}</div><div class="sub">${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a>${o.address?" · "+esc(o.address):""}</div>${o.note?`<div class="sub">“${esc(o.note)}”</div>`:""}<div class="sub">${new Date(o.created_at).toLocaleString("vi-VN")}${exp?' · <span class="old">quá 2 tiếng giữ hàng</span>':""}</div></div>
+    <div class="r" style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><b class="num">${fmt(o.amount)} ₫</b>${o.status==="Chờ thanh toán"?`<div class="btns" style="justify-content:flex-end"><button class="btn sm gold" type="button" data-paid="${esc(o.id)}">Đã nhận tiền</button><button class="btn sm ghost" type="button" data-cancel="${esc(o.id)}">Huỷ đơn</button></div>`:`<span class="pill ${o.status==="Đã thanh toán"?"st-ready":"st-new"}">${esc(o.status)}</span>`}</div></div>`};
+  return `<div class="head"><div><h1>Đơn web</h1><p>Khách đặt trên web bán hàng · giữ hàng 2 tiếng chờ chuyển khoản · nội dung chuyển khoản là mã đơn</p></div><div class="btns"><a class="btn" href="../" target="_blank" rel="noopener">Mở web bán hàng ↗</a></div></div>
+  <div class="grid"><div class="card"><div class="card-h"><h2>Chờ thanh toán</h2><span class="sub">${wait.length}</span></div><div class="card-b"><div class="list">${wait.map(row).join("")||`<div class="sub">Không có đơn chờ. Khi khách chuyển khoản, chị kiểm tra tài khoản có tiền với đúng mã đơn rồi bấm “Đã nhận tiền” — chiếc đồng hồ tự chuyển sang Đã bán.</div>`}</div></div></div>
+  <div class="card"><div class="card-h"><h2>Đơn đã xử lý</h2><span class="sub">${other.length}</span></div><div class="card-b"><div class="list">${other.slice(0,40).map(row).join("")||`<div class="sub">Chưa có.</div>`}</div></div></div></div>`;
+}
+async function orderPaid(code){
+  const o=S.orders.find(x=>x.id===code);if(!o)return;
+  try{let r=await sb.from("tt_orders").update({status:"Đã thanh toán",paid_at:new Date().toISOString()}).eq("id",code);if(r.error)throw r.error;
+    if(o.watch_id){const t=todayISO();r=await sb.from("watches").update({status:"Đã bán",sale_price:o.amount,sold_date:t,buyer_name:o.name,buyer_phone:o.phone,channel:"Website",pay_method:"Chuyển khoản",warranty_until:addMonths(t,6),hold_until:null,note:o.address?(S.watches.find(x=>x.id===o.watch_id)?.note||"")+(`\nGiao: ${o.address}`):undefined,updated_at:new Date().toISOString()}).eq("id",o.watch_id);if(r.error)throw r.error}
+    toast("Đã xác nhận thanh toán · đồng hồ chuyển sang Đã bán");await reload()}catch(e){fail(e)}
+}
+async function orderCancel(code){
+  const o=S.orders.find(x=>x.id===code);if(!o)return;
+  try{let r=await sb.from("tt_orders").update({status:"Huỷ"}).eq("id",code);if(r.error)throw r.error;
+    const w=S.watches.find(x=>x.id===o.watch_id);if(w&&w.status==="Đang giữ (đơn web)"){r=await sb.from("watches").update({status:"Sẵn sàng bán",hold_until:null,updated_at:new Date().toISOString()}).eq("id",w.id);if(r.error)throw r.error}
+    toast("Đã huỷ đơn · đồng hồ trở lại Sẵn sàng bán");await reload()}catch(e){fail(e)}
+}
+
+// ---------- Đã bán & khách ----------
+function vSold(){
+  const sold=S.watches.filter(w=>stOf(w)==="Đã bán"&&inPeriod(w.sold_date,S.period)).sort((a,b)=>(b.sold_date||"").localeCompare(a.sold_date||""));
+  const tot=sold.reduce((a,w)=>a+(Number(w.sale_price)||0),0),pf=sold.reduce((a,w)=>a+profitOf(w),0);const t=todayISO();
+  const cust={};S.watches.filter(w=>stOf(w)==="Đã bán").forEach(w=>{const k=(w.buyer_phone||"").replace(/\D/g,"")||w.buyer_name||"(không tên)";const c=cust[k]=cust[k]||{name:"",phone:"",social:"",n:0,v:0,last:"",items:[]};c.name=c.name||w.buyer_name;c.phone=c.phone||w.buyer_phone;c.social=c.social||w.buyer_social;c.n++;c.v+=Number(w.sale_price)||0;if((w.sold_date||"")>c.last)c.last=w.sold_date||"";c.items.push(nameOf(w))});
+  const cl=Object.values(cust).sort((a,b)=>b.last.localeCompare(a.last));
+  return `<div class="head"><div><h1>Đã bán & khách</h1><p>${sold.length} chiếc · doanh thu ${fmtM(tot)}${S.owner?` · lãi ${fmtM(pf)}`:""}</p></div>
+   <div class="btns"><select class="ctl" id="period">${Object.entries(PERIODS).map(([k,l])=>`<option value="${k}"${S.period===k?" selected":""}>${l}</option>`).join("")}</select><button class="btn" type="button" data-act="csv">Xuất Excel (CSV)</button></div></div>
+  <div class="bar"><div class="tabs"><button type="button" data-saletab="orders" aria-selected="${S.saleTab==="orders"}">Đơn đã bán</button><button type="button" data-saletab="cust" aria-selected="${S.saleTab==="cust"}">Khách mua (${cl.length})</button></div></div>
+  ${S.saleTab==="cust"?`<div class="card tw"><table><thead><tr><th>Khách</th><th>SĐT</th><th>Facebook / TikTok</th><th class="r">Số chiếc</th><th class="r">Tổng mua</th><th>Lần mua gần nhất</th><th>Đã mua</th></tr></thead><tbody>${cl.map(c=>`<tr><td><b>${esc(c.name||"—")}</b></td><td>${c.phone?`<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:"—"}</td><td class="sub">${esc(c.social||"—")}</td><td class="r num">${c.n}</td><td class="r num">${fmt(c.v)}</td><td class="num">${dmy(c.last)}</td><td class="sub">${esc(c.items.join(", "))}</td></tr>`).join("")||`<tr><td colspan="7" class="empty">Chưa có khách.</td></tr>`}</tbody></table></div>`
+  :`<div class="card tw"><table><thead><tr><th></th><th>Đồng hồ</th><th>Ngày bán</th><th>Khách</th><th>Kênh</th><th class="r">Giá bán</th>${S.owner?'<th class="r">Giá vốn</th><th class="r">Lãi</th>':""}<th>Bảo hành</th></tr></thead><tbody>
+  ${sold.map(w=>{const wu=w.warranty_until;const left=wu?Math.ceil((new Date(wu)-new Date(t))/864e5):null;return `<tr class="click" data-w="${esc(w.id)}"><td style="width:54px">${imgTag(w)}</td><td><b>${esc(nameOf(w))}</b><div class="sub">${esc(w.id)}${w.ref?" · "+esc(w.ref):""}</div></td><td class="num">${dmy(w.sold_date)}</td><td>${esc(w.buyer_name||"—")}<div class="sub">${esc(w.buyer_phone||"")}</div></td><td>${esc(w.channel||"—")}</td><td class="r num">${fmt(w.sale_price)}</td>${S.owner?`<td class="r num">${fmt(costOf(w))}</td><td class="r num" style="color:${profitOf(w)<0?"var(--neg)":"var(--pos)"};font-weight:600">${fmt(profitOf(w))}</td>`:""}<td>${wu?left<0?'<span class="sub">Hết</span>':`<span class="pill ${left<=14?"st-fix":"st-ready"}">còn ${left} ngày</span>`:'<span class="sub">—</span>'}</td></tr>`}).join("")||`<tr><td colspan="9" class="empty">Không có chiếc nào bán trong thời gian này.</td></tr>`}</tbody></table></div>`}`;
+}
+function csv(){
+  const head=["Mã","Hãng","Mẫu","Ref","Năm","Bộ máy","Tình trạng","Trạng thái","Ngày nhập","Giá niêm yết","Ngày bán","Giá bán","Khách","SĐT","Kênh","Bảo hành đến",...(S.owner?["Giá nhập","Chi phí sửa","Giá vốn","Lãi"]:[])];
+  const rows=S.watches.map(w=>[w.id,w.brand,w.model,w.ref,w.year,w.movement,w.condition,stOf(w),w.in_date,w.list_price,w.sold_date,w.sale_price,w.buyer_name,w.buyer_phone,w.channel,w.warranty_until,...(S.owner?[costRow(w).buy_price,repairSum(w),costOf(w),stOf(w)==="Đã bán"?profitOf(w):""]:[])]);
+  const s="﻿"+[head,...rows].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv"}));a.download=`timelesstouch-${todayISO()}.csv`;a.click();
+}
+
+// ---------- Chi phí shop ----------
+function vExp(){
+  const list=S.exps.filter(e=>inPeriod(e.date,S.period));const tot=list.reduce((a,e)=>a+(Number(e.amount)||0),0);
+  const by={};list.forEach(e=>{by[e.category]=(by[e.category]||0)+(Number(e.amount)||0)});const mx=Math.max(1,...Object.values(by));
+  return `<div class="head"><div><h1>Chi phí shop</h1><p>Chi phí chung không gắn với chiếc nào: quảng cáo, ship, hộp quà… · ${fmtM(tot)} trong ${PERIODS[S.period].toLowerCase()}</p></div>
+   <div class="btns"><select class="ctl" id="period">${Object.entries(PERIODS).map(([k,l])=>`<option value="${k}"${S.period===k?" selected":""}>${l}</option>`).join("")}</select></div></div>
+  <div class="two"><div class="card"><div class="card-h"><h2>Các khoản chi</h2></div>
+   <form id="ef" class="card-b form" style="border-bottom:1px solid var(--line)"><label>Ngày<input class="ctl" type="date" name="date" value="${todayISO()}" required></label><label>Loại chi<select class="ctl" name="category">${EXP_CATS.map(c=>`<option>${c}</option>`).join("")}</select></label><label>Số tiền (₫)<input class="ctl num" name="amount" inputmode="numeric" data-money required></label><label>Ghi chú<input class="ctl" name="note"></label><div class="full" style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">+ Thêm khoản chi</button></div></form>
+   <div class="tw"><table><thead><tr><th>Ngày</th><th>Loại</th><th>Ghi chú</th><th class="r">Số tiền</th><th></th></tr></thead><tbody>${list.map(e=>`<tr><td class="num">${dmy(e.date)}</td><td>${esc(e.category)}</td><td class="sub">${esc(e.note)}</td><td class="r num">${fmt(e.amount)}</td><td class="r"><button class="btn sm ghost danger" type="button" data-delexp="${esc(e.id)}" aria-label="Xoá">×</button></td></tr>`).join("")||`<tr><td colspan="5" class="empty">Chưa có khoản chi.</td></tr>`}</tbody></table></div></div>
+   <div class="card"><div class="card-h"><h2>Theo loại</h2></div><div class="card-b"><div class="list">${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="hbar" style="grid-template-columns:140px 1fr 70px"><span>${esc(k)}</span><div class="tr"><div class="fl" style="width:${v/mx*100}%"></div></div><span class="r num">${fmtM(v)}</span></div>`).join("")||`<div class="sub">—</div>`}</div></div></div></div>`;
+}
+
+// ---------- Báo cáo ----------
+function vRep(){
+  const sold=S.watches.filter(w=>stOf(w)==="Đã bán"&&inPeriod(w.sold_date,S.period));
+  const rev=sold.reduce((a,w)=>a+(Number(w.sale_price)||0),0),cogs=sold.reduce((a,w)=>a+costOf(w),0),exp=S.exps.filter(e=>inPeriod(e.date,S.period)).reduce((a,e)=>a+(Number(e.amount)||0),0);
+  const days=sold.filter(w=>w.in_date&&w.sold_date).map(w=>Math.max(0,(new Date(w.sold_date)-new Date(w.in_date))/864e5));const avgD=days.length?Math.round(days.reduce((a,b)=>a+b,0)/days.length):0;
+  const months=[];const d=new Date(todayISO());d.setDate(1);for(let i=5;i>=0;i--){const x=new Date(d);x.setMonth(d.getMonth()-i);months.push(monthOf(isoOf(x)))}
+  const mdata=months.map(m=>{const s=S.watches.filter(w=>stOf(w)==="Đã bán"&&monthOf(w.sold_date)===m);const r=s.reduce((a,w)=>a+(Number(w.sale_price)||0),0);const p=s.reduce((a,w)=>a+profitOf(w),0)-S.exps.filter(e=>monthOf(e.date)===m).reduce((a,e)=>a+(Number(e.amount)||0),0);return {m,r,p,n:s.length}});
+  const grp=key=>{const g={};sold.forEach(w=>{const k=key(w)||"(chưa rõ)";const o=g[k]=g[k]||{n:0,r:0,p:0};o.n++;o.r+=Number(w.sale_price)||0;o.p+=profitOf(w)});return Object.entries(g).sort((a,b)=>b[1].p-a[1].p)};
+  const tbl=(title,rows)=>`<div class="card tw"><div class="card-h"><h2>${title}</h2></div><table><thead><tr><th></th><th class="r">Chiếc</th><th class="r">Doanh thu</th><th class="r">Lãi</th><th class="r">Lãi / chiếc</th></tr></thead><tbody>${rows.map(([k,o])=>`<tr><td>${esc(k)}</td><td class="r num">${o.n}</td><td class="r num">${fmtM(o.r)}</td><td class="r num" style="color:${o.p<0?"var(--neg)":"var(--pos)"}">${fmtM(o.p)}</td><td class="r num">${fmtM(o.p/o.n)}</td></tr>`).join("")||`<tr><td colspan="5" class="empty">Chưa có dữ liệu.</td></tr>`}</tbody></table></div>`;
+  const net=rev-cogs-exp;
+  return `<div class="head"><div><h1>Báo cáo lãi</h1><p>Lãi = giá bán − (giá nhập + chi phí sửa) − chi phí shop</p></div>
+   <div class="btns"><select class="ctl" id="period">${Object.entries(PERIODS).map(([k,l])=>`<option value="${k}"${S.period===k?" selected":""}>${l}</option>`).join("")}</select><button class="btn" type="button" data-act="csv">Xuất Excel (CSV)</button></div></div>
+  <div class="kpis">
+   <div class="card kpi"><div class="l">Doanh thu</div><div class="v num">${fmtM(rev)}</div><div class="s">${sold.length} chiếc đã bán</div></div>
+   <div class="card kpi"><div class="l">Giá vốn hàng đã bán</div><div class="v num">${fmtM(cogs)}</div><div class="s">Giá nhập + chi phí sửa</div></div>
+   <div class="card kpi"><div class="l">Chi phí shop</div><div class="v num">${fmtM(exp)}</div><div class="s">Quảng cáo, ship, hộp quà…</div></div>
+   <div class="card kpi"><div class="l">Lãi ròng</div><div class="v num" style="color:${net<0?"var(--neg)":"var(--pos)"}">${fmtM(net)}</div><div class="s">${rev?Math.round(net/rev*100)+"% doanh thu":""}${avgD?` · bán trung bình sau ${avgD} ngày`:""}</div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div class="card-h"><h2>6 tháng gần nhất</h2></div><div class="card-b chart"><div class="legend"><span><i style="background:var(--brass)"></i>Doanh thu</span><span><i style="background:var(--pos)"></i>Lãi ròng</span></div>${chart(mdata)}</div></div>
+  <div class="two">${tbl("Theo kênh bán",grp(w=>w.channel))}${tbl("Theo hãng",grp(w=>w.brand))}</div>`;
+}
+function chart(d){
+  const W=720,H=240,P={l:52,r:10,t:10,b:30};const mx=Math.max(1,...d.map(x=>Math.max(x.r,x.p))),mn=Math.min(0,...d.map(x=>x.p));const y=v=>P.t+(mx-v)/(mx-mn)*(H-P.t-P.b);const bw=(W-P.l-P.r)/d.length;
+  const ticks=[0,.5,1].map(k=>mn+(mx-mn)*k);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Doanh thu và lãi 6 tháng">${ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${P.l-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${fmtM(t)}</text>`).join("")}
+  ${d.map((x,i)=>{const cx=P.l+bw*i+bw/2,b=Math.min(28,bw/3);return `<rect x="${cx-b-2}" y="${y(Math.max(0,x.r))}" width="${b}" height="${Math.abs(y(0)-y(x.r))}" rx="3" fill="var(--brass)"><title>${mLabel(x.m)}: doanh thu ${fmt(x.r)} ₫ (${x.n} chiếc)</title></rect><rect x="${cx+2}" y="${y(Math.max(0,x.p))}" width="${b}" height="${Math.abs(y(0)-y(x.p))}" rx="3" fill="${x.p<0?"var(--neg)":"var(--pos)"}"><title>${mLabel(x.m)}: lãi ${fmt(x.p)} ₫</title></rect><text x="${cx}" y="${H-10}" text-anchor="middle" font-size="12" fill="var(--muted)">${mLabel(x.m)}</text>`}).join("")}</svg>`;
+}
+
+// ---------- sự kiện ----------
+document.addEventListener("click",async e=>{
+  const t=e.target;
+  const nv=t.closest("[data-view]");if(nv){e.preventDefault();if(t.closest("[data-act=close]"))closeModal();S.view=nv.dataset.view;render();scrollTo(0,0);return}
+  const wEl=t.closest("[data-w]");if(wEl&&!t.closest(".md")){openWatch(wEl.dataset.w);return}
+  if(wEl&&t.closest(".md")){openWatch(wEl.dataset.w);return}
+  const gi=t.closest("[data-gi]");if(gi){S.gi=Number(gi.dataset.gi);openWatch($(".md").dataset.wid,true);return}
+  const it=t.closest("[data-invtab]");if(it){S.invTab=it.dataset.invtab;render();return}
+  const st=t.closest("[data-saletab]");if(st){S.saleTab=st.dataset.saletab;render();return}
+  const pd=t.closest("[data-paid]");if(pd){if(!pd.classList.contains("arm")){pd.classList.add("arm");pd.textContent="Bấm lần nữa để xác nhận";return}pd.disabled=true;orderPaid(pd.dataset.paid);return}
+  const cc=t.closest("[data-cancel]");if(cc){if(!cc.classList.contains("arm")){cc.classList.add("arm");cc.textContent="Chắc chắn huỷ?";return}orderCancel(cc.dataset.cancel);return}
+  const dx=t.closest("[data-delexp]");if(dx){if(!dx.classList.contains("arm")){dx.classList.add("arm");dx.textContent="Xoá?";return}const r=await sb.from("tt_expenses").delete().eq("id",dx.dataset.delexp);if(r.error)fail(r.error);else{await load();render()}return}
+  const dr=t.closest("[data-delrep]");if(dr){const w=S.watches.find(x=>x.id===$(".md").dataset.wid);const reps=(costRow(w).repairs||[]).filter((_,i)=>i!==Number(dr.dataset.delrep));saveCosts(w,reps);return}
+  const a=t.closest("[data-act]")?.dataset.act;if(!a)return;
+  const wid=$(".md[data-wid]")?.dataset.wid, w=wid&&S.watches.find(x=>x.id===wid);
+  if(a==="close")closeModal();
+  else if(a==="logout"){await sb.auth.signOut();location.reload()}
+  else if(a==="add")watchForm();
+  else if(a==="quick")quickForm();
+  else if(a==="edit"&&w)watchForm(w.id);
+  else if(a==="sell"&&w)sellForm(w.id);
+  else if(a==="deposit"&&w)sellForm(w.id,true);
+  else if(a==="undep"&&w)patchW(w.id,{status:"Sẵn sàng bán",deposit:0,deposit_date:null},"Đã huỷ cọc");
+  else if(a==="unsell"&&w){const b=t.closest("button");if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Bấm lần nữa: trả về kho";return}patchW(w.id,{status:"Sẵn sàng bán",sold_date:null,sale_price:0,warranty_until:null},"Đã trả về kho")}
+  else if(a==="cover"&&w){const ph=[...w.photos];const [x]=ph.splice(S.gi,1);ph.unshift(x);S.gi=0;patchW(w.id,{photos:ph},"Đã đặt ảnh bìa")}
+  else if(a==="delph"&&w){const b=t.closest("button");if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Bấm lần nữa để xoá";return}const ph=[...w.photos];const [x]=ph.splice(S.gi,1);S.gi=0;await patchW(w.id,{photos:ph},"Đã xoá ảnh");sb.storage.from("photos").remove([x.p,x.t].filter(Boolean))}
+  else if(a==="delw"&&w){const b=t.closest("button");if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Bấm lần nữa: xoá hẳn chiếc này";return}const r=await sb.from("watches").delete().eq("id",w.id);if(r.error)return fail(r.error);sb.storage.from("photos").remove(w.photos.flatMap(p=>[p.p,p.t]).filter(Boolean));closeModal();toast("Đã xoá "+w.id);await load();render()}
+  else if(a==="addrep"&&w){const amt=num($("#rpA").value);if(!amt){toast("Nhập số tiền chi phí sửa",true);return}saveCosts(w,[...(costRow(w).repairs||[]),{what:$("#rpW").value,amount:amt,date:todayISO()}])}
+  else if(a==="csv")csv();
+});
+document.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.id==="fSt"){S.fSt=t.value;render()}else if(t.id==="fBrand"){S.fBrand=t.value;render()}else if(t.id==="sort"){S.sort=t.value;render()}else if(t.id==="period"){S.period=t.value;render()}
+  else if(t.id==="qSt"){const id=$(".md").dataset.wid;patchW(id,{status:t.value,...(t.value!=="Đang giữ (đơn web)"?{hold_until:null}:{})},"Đã đổi trạng thái: "+t.value)}
+  else if(t.id==="addPh"){const id=$(".md").dataset.wid;const w=S.watches.find(x=>x.id===id);const files=[...t.files];const pr=$("#phProg");const ph=[...w.photos];
+    try{for(let i=0;i<files.length;i++){pr.textContent=`Đang tải ảnh ${i+1}/${files.length}…`;ph.push(await uploadPhoto(id,files[i]))}await patchW(id,{photos:ph},`Đã thêm ${files.length} ảnh`)}catch(err){fail(err)}}
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=$("#q");q.focus();q.setSelectionRange(pos,pos)}
+  if(e.target.matches("[data-money]")){const v=num(e.target.value);e.target.value=v?fmt(v):""}});
+document.addEventListener("submit",async e=>{e.preventDefault();const f=e.target;
+  if(f.id==="wf")saveWatch(f);else if(f.id==="qf")quickSave(f);else if(f.id==="sf")saveSell(f);
+  else if(f.id==="ef"){const fd=new FormData(f);const r=await sb.from("tt_expenses").insert({date:fd.get("date"),category:fd.get("category"),amount:num(fd.get("amount")),note:fd.get("note").trim()});if(r.error)return fail(r.error);toast("Đã thêm khoản chi");await load();render()}
+  else if(f.id==="login"){const b=f.querySelector("button");b.disabled=true;const {error}=await sb.auth.signInWithPassword({email:f.email.value.trim(),password:f.pw.value});if(error){$("#lerr").textContent="Sai email hoặc mật khẩu.";b.disabled=false}else boot()}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&S.email&&!$(".ov"))reload()});
+
+// ---------- khởi động ----------
+function loginView(msg){
+  $("#root").innerHTML=`<div class="login"><div class="card"><div style="display:flex;justify-content:center;margin-bottom:8px">${LOGO.replace('width="34" height="34"','width="54" height="54"')}</div><h1>TimelessTouch</h1><p>Quản lý kho đồng hồ</p>
+  ${msg?`<div class="banner">${msg}</div>`:`<form id="login"><input class="ctl" name="email" type="email" placeholder="Email" autocomplete="username" required><input class="ctl" name="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password" required><button class="btn pri" type="submit" style="justify-content:center">Đăng nhập</button><div id="lerr" class="sub" style="color:var(--neg);text-align:center"></div></form>`}</div></div>`;
+}
+async function boot(){
+  if(!CFG.SUPABASE_URL||!CFG.SUPABASE_ANON_KEY){loginView("Chưa kết nối cơ sở dữ liệu. Điền <b>SUPABASE_URL</b> và <b>SUPABASE_ANON_KEY</b> trong file <code>timeless/config.js</code>.");return}
+  sb=sb||window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
+  const {data}=await sb.auth.getSession();if(!data.session){loginView();return}
+  S.email=data.session.user.email;
+  const ow=await sb.from("owners").select("email");S.owner=!ow.error&&(ow.data||[]).length>0;
+  try{await load()}catch(e){fail(e)}render();
+}
+boot();
+</script>
+</body>
+</html>
