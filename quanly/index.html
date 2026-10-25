@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>TimelessTouch · Quản lý kho</title>
-<meta name="theme-color" content="#1F1813">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F1813'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23C9A46A' stroke-width='4'/%3E%3Cpath d='M32 20v13l8 5' stroke='%23C9A46A' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap">
 <style>
 :root{
-  --bg:#F6F2EA; --surface:#FFFDF9; --sunk:#EFE9DE; --line:#E4DBCC; --line-2:#D2C6B2;
+  --bg:#FFFFFF; --surface:#FFFFFF; --sunk:#EFE9DE; --line:#E4DBCC; --line-2:#D2C6B2;
   --ink:#231C14; --muted:#6E6253; --faint:#9A8E7E;
-  --side:#1F1813; --side-2:#2C231C; --side-ink:#D9CCB9;
+  --side:#FBF8F3; --side-2:#F1EADF; --side-ink:#4A4036;
   --brass:#B08A4F; --brass-ink:#7A5A26; --brass-soft:#F3EAD9;
-  --accent:#33271D; --accent-ink:#FFF8EE;
+  --accent:#1C1A17; --accent-ink:#FFFFFF;
   --pos:#2E7350; --pos-soft:#E2F0E7; --neg:#B23A2C; --neg-soft:#F8E3DF;
   --warn:#946200; --warn-soft:#FAEFD6; --info:#2F5E8A; --info-soft:#E2ECF6; --idle:#6F6A62; --idle-soft:#ECE8E1;
   --shadow:0 1px 2px rgba(35,28,20,.06),0 3px 10px rgba(35,28,20,.05);
@@ -23,24 +23,6 @@
   --f-brand:"Cormorant Garamond",Georgia,serif;
   --r:12px; color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#14100C; --surface:#1D1712; --sunk:#181310; --line:#33291F; --line-2:#44372A;
-  --ink:#F1E8DA; --muted:#B3A591; --faint:#857867;
-  --side:#0F0B08; --side-2:#211A14; --side-ink:#CDBFA9;
-  --brass:#D1AC70; --brass-ink:#E0BE85; --brass-soft:#2E2416;
-  --accent:#E6D3B3; --accent-ink:#1A140F;
-  --pos:#62C08F; --pos-soft:#14301F; --neg:#F08C7C; --neg-soft:#3A1D18;
-  --warn:#E5B653; --warn-soft:#33280F; --info:#86B3E0; --info-soft:#17283B; --idle:#A49C90; --idle-soft:#26201A;
-  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#14100C; --surface:#1D1712; --sunk:#181310; --line:#33291F; --line-2:#44372A;
-  --ink:#F1E8DA; --muted:#B3A591; --faint:#857867;
-  --side:#0F0B08; --side-2:#211A14; --side-ink:#CDBFA9;
-  --brass:#D1AC70; --brass-ink:#E0BE85; --brass-soft:#2E2416;
-  --accent:#E6D3B3; --accent-ink:#1A140F;
-  --pos:#62C08F; --pos-soft:#14301F; --neg:#F08C7C; --neg-soft:#3A1D18;
-  --warn:#E5B653; --warn-soft:#33280F; --info:#86B3E0; --info-soft:#17283B; --idle:#A49C90; --idle-soft:#26201A;
-  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f);-webkit-font-smoothing:antialiased}
@@ -48,20 +30,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--brass-ink)}
 .num{font-variant-numeric:tabular-nums}
 .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-.side{background:var(--side);color:var(--side-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:18px}
+.side{background:var(--side);border-right:1px solid var(--line);color:var(--side-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:18px}
 .brand{display:flex;align-items:center;gap:10px;padding:0 8px}
 .brand svg{flex:none}
-.brand b{font:600 23px/1 var(--f-brand);color:#F3E6CF;letter-spacing:.3px}
+.brand b{font:600 23px/1 var(--f-brand);color:var(--ink);letter-spacing:.3px}
 .brand small{display:block;font-size:10.5px;letter-spacing:2.4px;color:var(--brass);margin-top:4px;text-transform:uppercase}
 .nav{display:flex;flex-direction:column;gap:3px}
 .nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--side-ink);font-weight:500}
 .nav button:hover{background:var(--side-2)}
-.nav button[aria-current="page"]{background:var(--side-2);color:#FFF4E2;box-shadow:inset 3px 0 0 var(--brass)}
+.nav button[aria-current="page"]{background:var(--side-2);color:var(--ink);font-weight:600;box-shadow:inset 3px 0 0 var(--brass)}
 .nav svg{width:18px;height:18px;flex:none;opacity:.85}
 .nav .badge{margin-left:auto;background:var(--brass);color:#1F1813;border-radius:99px;font-size:11px;font-weight:700;padding:1px 7px}
-.side .me{margin-top:auto;font-size:12.5px;padding:0 8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--side-2);padding-top:14px}
+.side .me{margin-top:auto;font-size:12.5px;padding:0 8px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:14px}
 .side .me .role{color:var(--brass);font-size:11px;letter-spacing:1px;text-transform:uppercase}
-.side .me button{all:unset;cursor:pointer;border:1px solid var(--side-2);border-radius:8px;padding:6px 10px;text-align:center}
+.side .me button{all:unset;cursor:pointer;border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;text-align:center}
 main{padding:28px 30px 60px;min-width:0}
 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
 h1{font:600 30px/1.1 var(--f-brand);margin:0;letter-spacing:.2px}
@@ -177,6 +159,11 @@ tr.click:hover td{background:var(--sunk)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 18px;border-radius:10px;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;max-width:calc(100vw - 32px)}
 .toast.err{background:var(--neg);color:#fff}
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--side)}
+.import{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--brass-soft);border:1px solid var(--brass);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.import b{font-weight:600}
+.imp-list{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto}
+.imp-row{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px}
+.imp-row img{width:44px;height:58px;object-fit:cover;border-radius:6px;background:var(--sunk)}
 .login .card{width:min(400px,100%);padding:30px}
 .login h1{font-size:34px;text-align:center}
 .login p{text-align:center;color:var(--muted);margin:6px 0 20px}
@@ -198,9 +185,9 @@ tr.click:hover td{background:var(--sunk)}
   .side .nav,.side .me{display:none}
   .side .mtop{margin-left:auto;display:flex;gap:6px}
   main{padding:18px 16px 96px}
-  .mb-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--side);z-index:30;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .mb-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:30;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
   .mb-nav button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--side-ink);padding:4px 6px;border-radius:8px;position:relative}
-  .mb-nav button[aria-current="page"]{color:var(--brass)}
+  .mb-nav button[aria-current="page"]{color:var(--brass-ink);font-weight:600}
   .mb-nav svg{width:21px;height:21px}
   .mb-nav .badge{position:absolute;top:0;right:2px;background:var(--brass);color:#1F1813;border-radius:99px;font-size:10px;font-weight:700;padding:0 5px}
   .wgrid{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -247,14 +234,14 @@ const EXP_CATS=["Quảng cáo TikTok / FB / IG","Ship / vận chuyển","Phí s�
 const BRANDS=["Seiko","Grand Seiko","Citizen","Orient","Casio","Omega","Longines","Tissot","Rolex","Tudor","Rado","Hamilton","Bulova","Cartier","Tag Heuer","Oris","Zenith","Jaeger-LeCoultre","Patek Philippe","Audemars Piguet","Credor","King Seiko","Lord Marvel"];
 const OLD_DAYS=60;
 
-const S={view:"dash",watches:[],costs:new Map(),exps:[],orders:[],owner:false,email:"",q:"",fSt:"_stock",fBrand:"",sort:"new",invTab:"grid",saleTab:"orders",period:"month",gi:0,needSetup:false};
+const S={view:"dash",watches:[],costs:new Map(),exps:[],orders:[],owner:false,email:"",q:"",fSt:"_stock",fBrand:"",sort:"new",invTab:"grid",saleTab:"orders",period:"month",gi:0,needSetup:false,pending:[]};
 let sb=null;
 
 function toast(msg,err){const t=document.createElement("div");t.className="toast"+(err?" err":"");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),err?5200:2600)}
 function fail(e){console.error(e);toast("Lỗi: "+(e?.message||e),true)}
 
 // ---------- dữ liệu suy ra ----------
-const photoUrl=p=>p?`${CFG.SUPABASE_URL}/storage/v1/object/public/photos/${p.split("/").map(encodeURIComponent).join("/")}`:"";
+const photoUrl=p=>!p?"":/^https?:/.test(p)?p:p?`${CFG.SUPABASE_URL}/storage/v1/object/public/photos/${p.split("/").map(encodeURIComponent).join("/")}`:"";
 const cover=(w,big)=>{const p=(w.photos||[])[0];return p?photoUrl(big?p.p:(p.t||p.p)):""};
 const nameOf=w=>[w.brand,w.model].filter(Boolean).join(" ")||"Chưa đặt tên";
 const holdExpired=w=>w.status==="Đang giữ (đơn web)"&&w.hold_until&&new Date(w.hold_until)<new Date();
@@ -284,6 +271,34 @@ async function uploadPhoto(id,file){
 }
 function nextIds(n){let m=0;S.watches.forEach(w=>{const k=parseInt(String(w.id).replace(/\D/g,""),10);if(k>m)m=k});return Array.from({length:n},(_,i)=>"TT"+String(m+1+i).padStart(3,"0"))}
 
+// ---------- nhập lô sản phẩm chuẩn bị sẵn (thư mục /import trên web) ----------
+const skipKeys=()=>{try{return JSON.parse(localStorage.getItem("tt_skip")||"[]")}catch(e){return []}};
+async function checkImports(){
+  try{const r=await fetch("../import/index.json",{cache:"no-store"});if(!r.ok){S.pending=[];return}const {batches=[]}=await r.json();const all=[];
+    for(const b of batches){const j=await (await fetch("../import/"+b,{cache:"no-store"})).json();(j.items||[]).forEach(it=>all.push(it))}
+    const sk=skipKeys();S.pending=all.filter(it=>!sk.includes(it.key)&&!S.watches.some(w=>w.created_by==="import:"+it.key));
+  }catch(e){S.pending=[]}
+}
+const importBanner=()=>S.pending.length?`<div class="import"><span>📦 <b>${S.pending.length} sản phẩm mới</b> đã được chuẩn bị sẵn (ảnh + tên + mô tả + giá) — chỉ cần bấm đăng.</span><button class="btn pri sm" type="button" data-act="imp">Xem & đăng lên</button></div>`:"";
+function importForm(){
+  modal(`<div class="md sm"><div class="md-h"><h2>Đăng sản phẩm chuẩn bị sẵn</h2><button class="x" type="button" data-act="close">×</button></div>
+  <div class="md-b" style="display:flex;flex-direction:column;gap:12px"><div class="imp-list">${S.pending.map(it=>`<label class="imp-row"><input type="checkbox" class="impK" value="${esc(it.key)}" checked>${it.photos?.length?`<img src="../import/${esc(it.photos[0])}" alt="">`:`<span class="thumb"></span>`}<span style="flex:1;min-width:0"><b>${esc(it.brand)} ${esc(it.model)}</b><div class="sub num">${fmt(it.list_price)} ₫ · ${esc(it.size||"")}${it.photos?.length?"":" · <span class='old'>chưa có ảnh</span>"}</div></span></label>`).join("")}</div>
+  <label class="sub" style="display:flex;gap:8px;align-items:center">Trạng thái khi đăng<select class="ctl" id="impSt">${STATUSES.slice(0,3).map(s=>`<option${s==="Sẵn sàng bán"?" selected":""}>${s}</option>`).join("")}</select></label>
+  <span class="sub">Chiếc “Sẵn sàng bán” có giá sẽ hiện ngay trên web bán hàng. Chiếc chưa có ảnh sẽ vào kho ở trạng thái Mới nhập để chị thêm ảnh sau.</span></div>
+  <div class="md-f"><span class="prog" id="impProg" style="margin:0 auto 0 0"></span><button class="btn ghost" type="button" data-act="impskip">Bỏ qua mục không tick</button><button class="btn pri" type="button" data-act="impgo">Đăng lên</button></div></div>`);
+}
+async function runImport(){
+  const keys=[...document.querySelectorAll(".impK:checked")].map(x=>x.value);const its=S.pending.filter(it=>keys.includes(it.key));if(!its.length)return;
+  const btn=$('[data-act="impgo"]');btn.disabled=true;const pr=$("#impProg");const st=$("#impSt").value;const ids=nextIds(its.length);let n=0;
+  try{for(let i=0;i<its.length;i++){const it=its[i],id=ids[i];pr.textContent=`Đang đăng ${i+1}/${its.length}…`;const photos=[];
+      for(const p of it.photos||[]){const b=await (await fetch("../import/"+p)).blob();photos.push(await uploadPhoto(id,b))}
+      const row={id,brand:it.brand||"",model:it.model||"",ref:it.ref||"",year:it.year||"",movement:it.movement||"",size:it.size||"",material:it.material||"",condition:it.condition||"",accessories:it.accessories||[],list_price:Number(it.list_price)||0,shop_desc:it.shop_desc||"",note:it.note||"",status:photos.length?st:"Mới nhập",show_on_shop:true,photos,in_date:todayISO(),created_by:"import:"+it.key};
+      const r=await sb.from("watches").insert(row);if(r.error)throw r.error;
+      if(S.owner&&(it.buy_price||it.buy_from)){await sb.from("watch_costs").upsert({watch_id:id,buy_price:Number(it.buy_price)||0,buy_from:it.buy_from||"",repairs:[]})}n++}
+    toast(`Đã đăng ${n} sản phẩm`);closeModal();S.view="inv";await load();await checkImports();render();
+  }catch(e){fail(e);toast(`Đã đăng ${n} sản phẩm trước khi lỗi`,true);await load();await checkImports();render()}
+}
+
 // ---------- tải dữ liệu ----------
 async function load(){
   const [w,c,e,o]=await Promise.all([
@@ -311,7 +326,7 @@ const LOGO='<svg width="34" height="34" viewBox="0 0 64 64"><circle cx="32" cy="
 function shell(inner){
   const it=navItems();
   return `<div class="app"><aside class="side"><div class="brand">${LOGO}<div><b>TimelessTouch</b><small>Kho đồng hồ</small></div></div>
-  <div class="mtop"><button class="btn sm ghost" style="color:var(--side-ink);border-color:var(--side-2)" data-act="logout">Thoát</button></div>
+  <div class="mtop"><button class="btn sm ghost" data-act="logout">Thoát</button></div>
   <nav class="nav">${it.map(([k,l,b])=>`<button type="button" data-view="${k}" ${S.view===k?'aria-current="page"':""}>${IC[k]}<span>${l}</span>${b?`<span class="badge">${b}</span>`:""}</button>`).join("")}</nav>
   <div class="me"><span class="role">${S.owner?"Chủ shop":"Nhân viên"}</span><span>${esc(S.email)}</span><button type="button" data-act="logout">Đăng xuất</button></div></aside>
   <main>${S.needSetup?`<div class="banner"><b>Chưa có bảng dữ liệu.</b> Mở Supabase → SQL Editor, dán và chạy file <code>timeless/supabase.sql</code>.</div>`:""}${inner}</main>
@@ -340,7 +355,7 @@ function vDash(){
   const chMax=Math.max(1,...Object.values(ch).map(x=>x.v));
   return `<div class="head"><div><h1>Tổng quan</h1><p>${new Date().toLocaleDateString("vi-VN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</p></div>
   <div class="btns"><button class="btn" type="button" data-act="quick">Nhập nhanh từ ảnh</button><button class="btn pri" type="button" data-act="add">+ Thêm đồng hồ</button></div></div>
-  ${wait.length?`<div class="banner" style="background:var(--info-soft);color:var(--info)"><b>${wait.length} đơn web đang chờ thanh toán.</b> <a href="#" data-view="orders">Xem đơn →</a></div>`:""}
+  ${importBanner()}${wait.length?`<div class="banner" style="background:var(--info-soft);color:var(--info)"><b>${wait.length} đơn web đang chờ thanh toán.</b> <a href="#" data-view="orders">Xem đơn →</a></div>`:""}
   <div class="kpis">
    <div class="card kpi"><div class="l">Đang trong kho</div><div class="v num">${stock.length} <span style="font-size:15px;font-weight:500;color:var(--muted)">chiếc</span></div><div class="s">${by("Sẵn sàng bán")} sẵn bán · ${by("Đang sửa / lau dầu")} đang sửa · ${by("Mới nhập")} mới nhập · ${holds.length} cọc/giữ</div></div>
    ${S.owner?`<div class="card kpi"><div class="l">Vốn nằm trong kho<span class="lock">Chỉ chị thấy</span></div><div class="v num">${fmtM(capital)}</div><div class="s">Giá niêm yết: ${fmtM(listV)} · lãi dự kiến ${fmtM(listV-capital)}</div></div>`:`<div class="card kpi"><div class="l">Giá niêm yết hàng trong kho</div><div class="v num">${fmtM(listV)}</div><div class="s">${stock.filter(w=>!w.list_price).length} chiếc chưa có giá</div></div>`}
@@ -371,7 +386,7 @@ function vInv(){
   const stock=S.watches.filter(inStock);
   return `<div class="head"><div><h1>Kho đồng hồ</h1><p>${stock.length} chiếc trong kho · bấm một chiếc để xem ảnh, sửa, ghi cọc hoặc bán</p></div>
   <div class="btns"><button class="btn" type="button" data-act="quick">Nhập nhanh từ ảnh</button><button class="btn pri" type="button" data-act="add">+ Thêm đồng hồ</button></div></div>
-  <div class="bar"><input class="ctl q" id="q" type="search" placeholder="Tìm mã, hãng, mẫu, ref, tên khách…" value="${esc(S.q)}">
+  ${importBanner()}<div class="bar"><input class="ctl q" id="q" type="search" placeholder="Tìm mã, hãng, mẫu, ref, tên khách…" value="${esc(S.q)}">
    <select class="ctl" id="fSt"><option value="_stock">Đang trong kho</option><option value="_all"${S.fSt==="_all"?" selected":""}>Tất cả (cả đã bán)</option>${STATUSES.map(s=>`<option${S.fSt===s?" selected":""}>${s}</option>`).join("")}</select>
    <select class="ctl" id="fBrand"><option value="">Mọi hãng</option>${brands.map(b=>`<option${S.fBrand===b?" selected":""}>${esc(b)}</option>`).join("")}</select>
    <select class="ctl" id="sort"><option value="new">Mới nhập trước</option><option value="old"${S.sort==="old"?" selected":""}>Để lâu nhất trước</option><option value="hi"${S.sort==="hi"?" selected":""}>Giá cao → thấp</option><option value="lo"${S.sort==="lo"?" selected":""}>Giá thấp → cao</option></select>
@@ -629,6 +644,9 @@ document.addEventListener("click",async e=>{
   else if(a==="delw"&&w){const b=t.closest("button");if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent="Bấm lần nữa: xoá hẳn chiếc này";return}const r=await sb.from("watches").delete().eq("id",w.id);if(r.error)return fail(r.error);sb.storage.from("photos").remove(w.photos.flatMap(p=>[p.p,p.t]).filter(Boolean));closeModal();toast("Đã xoá "+w.id);await load();render()}
   else if(a==="addrep"&&w){const amt=num($("#rpA").value);if(!amt){toast("Nhập số tiền chi phí sửa",true);return}saveCosts(w,[...(costRow(w).repairs||[]),{what:$("#rpW").value,amount:amt,date:todayISO()}])}
   else if(a==="csv")csv();
+  else if(a==="imp")importForm();
+  else if(a==="impgo")runImport();
+  else if(a==="impskip"){const un=[...document.querySelectorAll(".impK:not(:checked)")].map(x=>x.value);try{localStorage.setItem("tt_skip",JSON.stringify([...skipKeys(),...un]))}catch(e){}await checkImports();closeModal();render();toast(`Đã bỏ qua ${un.length} mục`)}
 });
 document.addEventListener("change",async e=>{
   const t=e.target;
@@ -658,7 +676,7 @@ async function boot(){
   const {data}=await sb.auth.getSession();if(!data.session){loginView();return}
   S.email=data.session.user.email;
   const ow=await sb.from("owners").select("email");S.owner=!ow.error&&(ow.data||[]).length>0;
-  try{await load()}catch(e){fail(e)}render();
+  try{await load()}catch(e){fail(e)}render();await checkImports();render();
 }
 boot();
 </script>

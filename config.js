@@ -12,5 +12,6 @@ window.TT_CONFIG = {
   FACEBOOK: "https://www.facebook.com/profile.php?id=61589764829413",
   INSTAGRAM: "https://www.instagram.com/bytimelesstouch_vn",
   TIKTOK: "https://www.tiktok.com/@bytimelesstouch_",
+  PHONE: "0931005052",
   ADDRESS: "119 Phổ Quang, Phú Nhuận, TP.HCM"
 };
