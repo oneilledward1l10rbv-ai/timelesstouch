@@ -186,10 +186,31 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--ink)}
   .ov{padding:0}.md{min-height:100vh;width:100%}
   .feats div{padding:14px 16px}
 }
+
+.buybar{display:none}
+.show-m{display:none}
+@media (max-width:780px){
+  .hide-m{display:none}.show-m{display:inline}
+  .hero .in{gap:22px;padding:22px 18px 30px}.arch{width:64%}.arch::before{inset:-9px -9px 9px 9px}.arch .sig{display:none}
+  .hero .eyebrow{font-size:10.5px;letter-spacing:2.5px}.hero h1{font-size:27px;margin-top:10px}.orn{margin:14px 0}.hero p{font-size:14.5px;margin-bottom:20px}
+  .hero .ctas{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hero .ctas .btn{padding:13px 10px;font-size:12px;letter-spacing:1.2px}
+  .feats{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border-top:0}.feats div{flex:0 0 46%;scroll-snap-align:start;padding:12px 14px;font-size:12px;border-bottom:0!important}.feats b{font-size:14.5px}
+  .look{padding:34px 0 0}.look .hd2{padding:0 18px;margin-bottom:18px}.look .hd2 h2{font-size:25px;margin:6px 0 0}.look .hd2 p{display:none}
+  .look .row{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:0 18px 6px;max-width:none}.look .row>div{flex:0 0 58%;scroll-snap-align:center}
+  .look figure,.look figure.arc{border-radius:0;aspect-ratio:4/5}
+  .sec-h{margin:30px 0 14px}.sec-h h2{font-size:27px}.filters{margin-bottom:18px}
+  .grid{gap:22px 10px}.it{gap:8px}.it .nm{font-size:15px;line-height:1.3}.it .br{font-size:10.5px;letter-spacing:1.5px}.it .pr{font-size:14px}
+  .info h1{font-size:25px}.info .pr{font-size:21px}.info{gap:14px}.spec div{grid-template-columns:110px 1fr;padding:9px 0;font-size:13.5px}
+  .acts>.btn.pri{display:none}
+  .buybar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:12px;box-shadow:0 -6px 20px rgba(20,18,16,.06)}
+  .buybar small{display:block;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600}.buybar b{font-size:18px}.buybar .btn{padding:13px 26px}
+  .pg{padding-bottom:76px}
+  .desc .body p.first{font-size:18px}
+}
 </style>
 </head>
 <body>
-<div class="topbar">Đồng hồ vintage tuyển chọn<span> · Mỗi mẫu chỉ một chiếc</span></div>
+<div class="topbar hide-m">Đồng hồ vintage tuyển chọn<span> · Mỗi mẫu chỉ một chiếc</span></div>
 <header><div class="hd"><div class="l"><a href="#suu-tap">Bộ sưu tập</a><a href="#lien-he">Liên hệ</a></div>
 <a class="logo" href="./"><b>TimelessTouch</b><small>Vintage Watches</small></a>
 <div class="r" id="hdr"></div></div></header>
@@ -199,15 +220,15 @@ footer .links a{text-decoration:none}footer .links a:hover{color:var(--ink)}
 <p>Đồng hồ vintage Nhật, Thụy Sĩ & châu Âu — demi vàng, mặt xà cừ, dây đính đá như một món trang sức cổ điển. Mỗi mẫu chỉ một chiếc, chụp ảnh thật tại tiệm.</p>
 <div class="ctas"><a class="btn pri" href="#suu-tap">Xem bộ sưu tập</a><a class="btn" id="heroZalo" href="#lien-he">Nhắn tư vấn</a></div></div>
 <div class="arch"><div class="fr"><video src="media/hero.mp4" poster="media/hero.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Đồng hồ vintage TimelessTouch trên tay"></video></div><div class="sig"><small>Mỗi mẫu một chiếc</small>Jewelry watch · since the 90s</div></div></div></section>
-<div class="feats"><div><b>Mỗi mẫu một chiếc</b>Không trùng lặp, không sản xuất lại</div><div><b>Ảnh chụp thật</b>Chụp tại tiệm, đúng tình trạng</div><div><b>Kiểm tra máy</b>Chạy ổn định trước khi giao</div><div><b>Giữ hàng 2 tiếng</b>Khi bạn đặt và chuyển khoản</div></div>
+<div class="feats"><div><b>Mỗi mẫu một chiếc</b>Không trùng lặp, không sản xuất lại</div><div><b>Ảnh chụp thật</b>Chụp tại tiệm, đúng tình trạng</div><div><b>Kiểm tra máy</b>Chạy ổn định trước khi giao</div><div><b>Chuyển khoản trước</b>Tiệm xác nhận rồi mới gửi hàng</div></div>
 <section class="look"><div class="hd2"><div class="eyebrow" style="font-size:12px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold)">Lookbook</div><h2>Đeo lên tay,<br><i>như một món trang sức cổ điển</i></h2><p>Gợi ý phối đồ cùng đồng hồ vintage — sơ mi, áo trắng, denim, vòng ngọc. Vẻ sang kiểu old money, clean girl, nhẹ nhàng và rất riêng.</p></div>
 <div class="row">
-<div><figure><img src="media/style-blue.jpg" alt="Phối đồng hồ vintage mặt xanh với sơ mi xanh" loading="lazy"></figure><figcaption>Sơ mi xanh · mặt cobalt</figcaption></div>
-<div><figure class="arc"><img src="media/wrist-octagon.jpg" alt="Đồng hồ octagon mini vàng champagne trên tay" loading="lazy"></figure><figcaption>Octagon mini · gold champagne</figcaption></div>
-<div><figure><img src="media/gold-1.jpg" alt="Đồng hồ nữ vintage demi vàng đính đá" loading="lazy"></figure><figcaption>Demi vàng · đính đá</figcaption></div>
-<div><figure><img src="media/trio-velvet.jpg" alt="Bộ ba đồng hồ nữ vintage vàng" loading="lazy"></figure><figcaption>Tank & lục giác · cổ điển Nhật</figcaption></div>
-<div><figure class="arc"><img src="media/style-lake.jpg" alt="Phối đồng hồ vàng với áo trắng và quần jean" loading="lazy"></figure><figcaption>Áo trắng, denim · đồng hồ vàng</figcaption></div>
-<div><figure><img src="media/citizen-blue.jpg" alt="Đồng hồ Citizen vintage mặt xanh cobalt" loading="lazy"></figure><figcaption>Mặt xanh cobalt · dây thép zin</figcaption></div>
+<div><figure><img src="media/style-blue.jpg" alt="Phối đồng hồ vintage mặt xanh với sơ mi xanh" loading="lazy"></figure></div>
+<div><figure class="arc"><img src="media/wrist-octagon.jpg" alt="Đồng hồ octagon mini vàng champagne trên tay" loading="lazy"></figure></div>
+<div><figure><img src="media/gold-1.jpg" alt="Đồng hồ nữ vintage demi vàng đính đá" loading="lazy"></figure></div>
+<div><figure><img src="media/trio-velvet.jpg" alt="Bộ ba đồng hồ nữ vintage vàng" loading="lazy"></figure></div>
+<div><figure class="arc"><img src="media/style-lake.jpg" alt="Phối đồng hồ vàng với áo trắng và quần jean" loading="lazy"></figure></div>
+<div><figure><img src="media/citizen-blue.jpg" alt="Đồng hồ Citizen vintage mặt xanh cobalt" loading="lazy"></figure></div>
 </div></section>
 <main class="wrap" id="suu-tap"><div class="sec-h"><h2>Bộ sưu tập</h2><span class="cnt" id="cnt"></span></div>
 <div class="filters" id="filters"></div>
@@ -268,9 +289,10 @@ function page(id,keep){
    <div class="info"><span class="crumb">Bộ sưu tập / ${esc(w.brand)}</span><span class="br">${esc(w.brand)}</span><h1>${esc(w.model||w.brand)}</h1><div class="pr num">${fmt(w.list_price)}₫</div>
     ${lead?`<p class="lead">${esc(lead)}</p>`:""}
     <div class="acts">${w.avail==="available"?`<button class="btn pri" type="button" data-a="buy">Mua ngay · chuyển khoản</button>`:`<div class="heldbox">Chiếc này đã có khách giữ. Nhắn tiệm để được báo nếu khách không lấy.</div>`}
-     <div class="row">${zaloUrl()?`<a class="btn" href="${esc(zaloUrl())}" target="_blank" rel="noopener">Nhắn Zalo</a>`:""}${tel?`<a class="btn" href="tel:${esc(tel)}">Gọi ${esc(phoneFmt(tel))}</a>`:C.FACEBOOK?`<a class="btn" href="${esc(C.FACEBOOK)}" target="_blank" rel="noopener">Facebook</a>`:""}</div></div>
+     <div class="row">${zaloUrl()?`<a class="btn" href="${esc(zaloUrl())}" target="_blank" rel="noopener">Nhắn Zalo</a>`:""}${tel?`<a class="btn" href="tel:${esc(tel)}">Gọi <span class="hide-m">${esc(phoneFmt(tel))}</span><span class="show-m">tiệm</span></a>`:C.FACEBOOK?`<a class="btn" href="${esc(C.FACEBOOK)}" target="_blank" rel="noopener">Facebook</a>`:""}</div></div>
     <dl class="spec">${spec.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
-    <div class="assure"><span>Ảnh chụp thật tại tiệm</span><span>Kiểm tra máy trước khi giao</span><span>Mỗi mẫu chỉ một chiếc</span><span>Giữ hàng 2 tiếng khi đặt</span></div>
+    ${w.avail==="available"?`<div class="buybar"><div><small>${esc(w.brand)}</small><b class="num">${fmt(w.list_price)}₫</b></div><button class="btn pri" type="button" data-a="buy">Mua ngay</button></div>`:""}
+    <div class="assure"><span>Ảnh chụp thật tại tiệm</span><span>Kiểm tra máy trước khi giao</span><span>Mỗi mẫu chỉ một chiếc</span><span>Chuyển khoản xong mới gửi hàng</span></div>
    </div></div>
   ${w.shop_desc?`<section class="desc"><div class="box"><h2>Mô tả sản phẩm</h2><div class="body">${descHtml(w.shop_desc)}</div></div></section>`:""}
   ${more.length?`<section class="more"><h2>Có thể bạn cũng thích</h2><div class="grid">${more.map(card).join("")}</div></section>`:""}`;
@@ -289,21 +311,21 @@ function buyForm(id){
    <label>Lời nhắn cho tiệm<input class="ctl" name="note"></label>
    <div class="err" id="berr"></div>
    <button class="btn pri" type="submit">Đặt hàng & hiện mã chuyển khoản</button>
-   <span class="note">Tiệm giữ chiếc đồng hồ này cho bạn trong 2 tiếng để chuyển khoản và sẽ gọi xác nhận trước khi giao.</span></form>`);
+   <span class="note">Sau khi đặt, bạn chuyển khoản theo mã QR. Tiệm xác nhận đã nhận tiền rồi mới gửi hàng và sẽ gọi cho bạn trước khi giao.</span></form>`);
 }
 function payView(id,code,amount){
   const w=ITEMS.find(x=>x.id===id)||{};const hasBank=C.BANK_BIN&&C.ACCOUNT_NO;
   const qr=hasBank?`https://img.vietqr.io/image/${encodeURIComponent(C.BANK_BIN)}-${encodeURIComponent(C.ACCOUNT_NO)}-compact2.png?amount=${Math.round(amount)}&addInfo=${encodeURIComponent(code)}&accountName=${encodeURIComponent(C.ACCOUNT_NAME||"")}`:"";
   try{localStorage.setItem("tt_last_order",JSON.stringify({id,code,amount,t:Date.now()}))}catch(e){}
   modal(`<button class="x" type="button" data-a="closeov" aria-label="Đóng">×</button><div class="pay">
-   <h2>Đặt hàng thành công</h2><div class="note">${esc(title(w))} · tiệm giữ hàng cho bạn trong 2 tiếng</div>
+   <h2>Đặt hàng thành công</h2><div class="note">${esc(title(w))} · chuyển khoản xong tiệm sẽ gửi hàng cho bạn</div>
    ${hasBank?`<div class="qr"><img src="${esc(qr)}" alt="Mã QR chuyển khoản ${fmt(amount)} đồng, nội dung ${esc(code)}"></div><div class="note">Mở app ngân hàng → quét mã QR. Số tiền và nội dung đã điền sẵn.</div>`:""}
    <dl class="bank">${hasBank?`<dt>Ngân hàng</dt><dd>${esc(C.BANK_NAME||C.BANK_BIN)}</dd><span></span><dt>Số tài khoản</dt><dd class="num">${esc(C.ACCOUNT_NO)}</dd><button class="copy" type="button" data-copy="${esc(C.ACCOUNT_NO)}">Chép</button><dt>Chủ tài khoản</dt><dd>${esc(C.ACCOUNT_NAME)}</dd><span></span>`:""}
     <dt>Số tiền</dt><dd class="num">${fmt(amount)}₫</dd><button class="copy" type="button" data-copy="${Math.round(amount)}">Chép</button>
     <dt>Nội dung</dt><dd class="code">${esc(code)}</dd><button class="copy" type="button" data-copy="${esc(code)}">Chép</button></dl>
    <div id="pst" class="note">Sau khi chuyển khoản, tiệm kiểm tra và xác nhận trong giờ làm việc. Trang này tự cập nhật.</div>
    <button class="btn" type="button" data-a="check" data-code="${esc(code)}">Tôi đã chuyển khoản · kiểm tra</button></div>`);
-  const tick=async()=>{const {data}=await sb.rpc("order_status",{p_code:code});const el=$("#pst");if(!el)return;if(data==="Đã thanh toán"){el.outerHTML=`<div class="okbox">Tiệm đã nhận được tiền. Cảm ơn bạn! Tiệm sẽ liên hệ để giao đồng hồ.</div>`;clearInterval(poll);poll=null}else if(data==="Huỷ"||data==="Hết hạn"){el.innerHTML=`<span class="err">Đơn ${esc(code)} đã ${data==="Huỷ"?"bị huỷ":"hết hạn giữ hàng"}. Nếu bạn đã chuyển khoản, hãy nhắn tiệm kèm mã đơn.</span>`}};
+  const tick=async()=>{const {data}=await sb.rpc("order_status",{p_code:code});const el=$("#pst");if(!el)return;if(data==="Đã thanh toán"){el.outerHTML=`<div class="okbox">Tiệm đã nhận được tiền. Cảm ơn bạn! Tiệm sẽ liên hệ để giao đồng hồ.</div>`;clearInterval(poll);poll=null}else if(data==="Huỷ"||data==="Hết hạn"){el.innerHTML=`<span class="err">Đơn ${esc(code)} đã ${data==="Huỷ"?"bị huỷ":"hết hạn"}. Nếu bạn đã chuyển khoản, hãy nhắn tiệm kèm mã đơn.</span>`}};
   if(poll)clearInterval(poll);poll=setInterval(tick,20000);return tick;
 }
 document.addEventListener("click",async e=>{
