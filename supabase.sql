@@ -79,10 +79,10 @@ create policy "photos delete" on storage.objects for delete to authenticated usi
 create or replace view public.shop_watches as
   select id, brand, model, ref, year, movement, size, material, condition, accessories, photos,
          list_price, shop_desc, updated_at,
-         case when status = 'Khách đã cọc' then 'held' else 'available' end as avail
+         case when status = 'Đã bán' then 'sold' when status = 'Khách đã cọc' then 'held' else 'available' end as avail
   from public.watches
   where coalesce(show_on_shop, true) and list_price > 0
-    and status in ('Sẵn sàng bán', 'Đang giữ (đơn web)', 'Khách đã cọc');
+    and status in ('Sẵn sàng bán', 'Đang giữ (đơn web)', 'Khách đã cọc', 'Đã bán');
 grant select on public.shop_watches to anon, authenticated;
 
 

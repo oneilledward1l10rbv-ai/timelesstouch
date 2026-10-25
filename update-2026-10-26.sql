@@ -1,14 +1,15 @@
 -- TimelessTouch · cập nhật 26/10/2026 — chạy 1 lần trong Supabase → SQL Editor
 -- 1) Khách đặt hàng KHÔNG giữ đồng hồ nữa: chỉ khi tiệm xác nhận đã nhận tiền mới chuyển sang Đã bán
--- 2) Kiểm tra số điện thoại Việt Nam hợp lệ (10 số, đầu 03/05/07/08/09, hoặc +84)
+-- 2) Chiếc đã bán vẫn hiện trên web với nhãn "Đã bán"
+-- 3) Kiểm tra số điện thoại Việt Nam hợp lệ (10 số, đầu 03/05/07/08/09, hoặc +84)
 
 create or replace view public.shop_watches as
   select id, brand, model, ref, year, movement, size, material, condition, accessories, photos,
          list_price, shop_desc, updated_at,
-         case when status = 'Khách đã cọc' then 'held' else 'available' end as avail
+         case when status = 'Đã bán' then 'sold' when status = 'Khách đã cọc' then 'held' else 'available' end as avail
   from public.watches
   where coalesce(show_on_shop, true) and list_price > 0
-    and status in ('Sẵn sàng bán', 'Đang giữ (đơn web)', 'Khách đã cọc');
+    and status in ('Sẵn sàng bán', 'Đang giữ (đơn web)', 'Khách đã cọc', 'Đã bán');
 grant select on public.shop_watches to anon, authenticated;
 
 create or replace function public.place_order(p_watch text, p_name text, p_phone text, p_address text, p_note text)

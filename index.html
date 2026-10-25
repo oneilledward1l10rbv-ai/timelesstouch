@@ -87,7 +87,9 @@ header{background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:
 .it .br{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600}
 .it .nm{font:500 17.5px/1.35 var(--f-s);margin-top:-6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .it .pr{font-size:15px;font-weight:600;margin-top:-4px}
-.it.held{opacity:.6}
+.it.held{opacity:.75}.it.held .ph img{filter:grayscale(.35)}
+.it .tag.sold{background:var(--black);color:#fff}
+.it .pr s{color:var(--faint);font-weight:400}
 .btn{border:1px solid var(--black);background:#fff;padding:14px 26px;cursor:pointer;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;border-radius:0;transition:.15s;color:var(--ink)}
 .btn:hover{background:var(--ivory)}
 .btn.pri{background:var(--black);color:#fff}
@@ -250,6 +252,7 @@ const url=p=>!p?"":/^https?:/.test(p)?p:`${C.SUPABASE_URL}/storage/v1/object/pub
 const title=w=>[w.brand,w.model].filter(Boolean).join(" ")||"Đồng hồ vintage";
 const zaloUrl=()=>{const z=String(C.ZALO||"").trim();return !z?"":/^https?:/.test(z)?z:`https://zalo.me/${z.replace(/\D/g,"")}`};
 const phoneFmt=p=>String(p||"").replace(/\D/g,"").replace(/^(\d{4})(\d{3})(\d+)$/,"$1 $2 $3");
+const rank=w=>({available:0,held:1,sold:2})[w.avail]??0;
 let sb=null, ITEMS=[], gi=0, poll=null, fBrand="", sortBy="new";
 function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 
@@ -260,7 +263,7 @@ function chrome(){
   const hz=$("#heroZalo");if(hz&&zaloUrl()){hz.href=zaloUrl();hz.target="_blank";hz.rel="noopener"}
   $("#addr").innerHTML=`${esc(C.ADDRESS||"")}${C.PHONE?` · <a href="tel:${esc(String(C.PHONE).replace(/\D/g,""))}">${esc(phoneFmt(C.PHONE))}</a>`:""}`;
 }
-function card(w){const p=(w.photos||[])[0];return `<a class="it ${w.avail!=="available"?"held":""}" href="#${encodeURIComponent(w.id)}"><div class="ph">${p?`<img src="${esc(url(p.t||p.p))}" alt="${esc(title(w))}" loading="lazy">`:""}${w.avail!=="available"?'<span class="tag">Đã có khách giữ</span>':""}</div><span class="br">${esc(w.brand)}</span><span class="nm">${esc(w.model||w.brand)}</span><span class="pr num">${fmt(w.list_price)}₫</span></a>`}
+function card(w){const p=(w.photos||[])[0];return `<a class="it ${w.avail!=="available"?"held":""}" href="#${encodeURIComponent(w.id)}"><div class="ph">${p?`<img src="${esc(url(p.t||p.p))}" alt="${esc(title(w))}" loading="lazy">`:""}${w.avail==="sold"?'<span class="tag sold">Đã bán</span>':w.avail==="held"?'<span class="tag">Đã có khách cọc</span>':""}</div><span class="br">${esc(w.brand)}</span><span class="nm">${esc(w.model||w.brand)}</span><span class="pr num">${w.avail==="sold"?`<s>${fmt(w.list_price)}₫</s> · Đã bán`:fmt(w.list_price)+"₫"}</span></a>`}
 function render(){
   const brands=[...new Set(ITEMS.map(w=>w.brand).filter(Boolean))].sort((a,b)=>ITEMS.filter(x=>x.brand===b).length-ITEMS.filter(x=>x.brand===a).length);
   const q=($("#q")?.value||"").trim().toLowerCase();
@@ -268,7 +271,7 @@ function render(){
    <select class="ctl" id="so" aria-label="Sắp xếp"><option value="new">Mới về</option><option value="lo"${sortBy==="lo"?" selected":""}>Giá thấp → cao</option><option value="hi"${sortBy==="hi"?" selected":""}>Giá cao → thấp</option></select>
    <input class="ctl q" id="q" type="search" placeholder="Tìm mẫu…" value="${esc(q)}">`;
   const L=ITEMS.filter(w=>(!fBrand||w.brand===fBrand)&&(!q||[w.brand,w.model,w.year,w.movement,w.shop_desc].join(" ").toLowerCase().includes(q)))
-   .sort(sortBy==="lo"?(a,c)=>a.list_price-c.list_price:sortBy==="hi"?(a,c)=>c.list_price-a.list_price:(a,c)=>(a.avail===c.avail?0:a.avail==="available"?-1:1)||String(c.updated_at).localeCompare(String(a.updated_at)));
+   .sort(sortBy==="lo"?(a,c)=>(rank(a)-rank(c))||a.list_price-c.list_price:sortBy==="hi"?(a,c)=>(rank(a)-rank(c))||c.list_price-a.list_price:(a,c)=>(rank(a)-rank(c))||String(c.updated_at).localeCompare(String(a.updated_at)));
   $("#cnt").textContent=`${ITEMS.filter(w=>w.avail==="available").length} mẫu đang có`;
   $("#list").innerHTML=L.map(card).join("")||`<div class="empty">${ITEMS.length?"Không có mẫu phù hợp.":"Tiệm đang cập nhật mẫu mới, bạn quay lại sau nhé."}</div>`;
 }
@@ -290,9 +293,9 @@ function page(id,keep){
   el.innerHTML=`<div class="pg-top"><div class="in"><button class="back" data-a="home">← Bộ sưu tập</button><a class="logo" href="./" data-a="home"><b>TimelessTouch</b></a><span style="width:110px"></span></div></div>
   <div class="pd"><div class="gal"><div class="main" id="gm">${ph.length?`<img src="${esc(url(ph[gi].p))}" alt="${esc(title(w))}">`:""}${ph.length>1?`<button class="nv prev" data-a="prev" aria-label="Ảnh trước">‹</button><button class="nv next" data-a="next" aria-label="Ảnh sau">›</button>`:""}</div>
    ${ph.length>1?`<div class="ths">${ph.map((p,i)=>`<img src="${esc(url(p.t||p.p))}" class="${i===gi?"on":""}" data-g="${i}" alt="">`).join("")}</div>`:""}</div>
-   <div class="info"><span class="crumb">Bộ sưu tập / ${esc(w.brand)}</span><span class="br">${esc(w.brand)}</span><h1>${esc(w.model||w.brand)}</h1><div class="pr num">${fmt(w.list_price)}₫</div>
+   <div class="info"><span class="crumb">Bộ sưu tập / ${esc(w.brand)}</span><span class="br">${esc(w.brand)}</span><h1>${esc(w.model||w.brand)}</h1><div class="pr num">${w.avail==="sold"?`<s style="color:var(--faint);font-weight:400">${fmt(w.list_price)}₫</s> <span style="font-size:15px;letter-spacing:1.5px;text-transform:uppercase">Đã bán</span>`:fmt(w.list_price)+"₫"}</div>
     ${lead?`<p class="lead">${esc(lead)}</p>`:""}
-    <div class="acts">${w.avail==="available"?`<button class="btn pri" type="button" data-a="buy">Mua ngay · chuyển khoản</button>`:`<div class="heldbox">Chiếc này đã có khách giữ. Nhắn tiệm để được báo nếu khách không lấy.</div>`}
+    <div class="acts">${w.avail==="available"?`<button class="btn pri" type="button" data-a="buy">Mua ngay · chuyển khoản</button>`:w.avail==="sold"?`<div class="heldbox"><b>Chiếc này đã bán.</b><br>Nhắn tiệm để được tìm mẫu tương tự nhé.</div>`:`<div class="heldbox">Chiếc này đã có khách cọc. Nhắn tiệm để được báo nếu khách không lấy.</div>`}
      <div class="row">${zaloUrl()?`<a class="btn" href="${esc(zaloUrl())}" target="_blank" rel="noopener">Nhắn Zalo</a>`:""}${tel?`<a class="btn" href="tel:${esc(tel)}">Gọi <span class="hide-m">${esc(phoneFmt(tel))}</span><span class="show-m">tiệm</span></a>`:C.FACEBOOK?`<a class="btn" href="${esc(C.FACEBOOK)}" target="_blank" rel="noopener">Facebook</a>`:""}</div></div>
     <dl class="spec">${spec.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
     ${w.avail==="available"?`<div class="buybar"><div><small>${esc(w.brand)}</small><b class="num">${fmt(w.list_price)}₫</b></div><button class="btn pri" type="button" data-a="buy">Mua ngay</button></div>`:""}
